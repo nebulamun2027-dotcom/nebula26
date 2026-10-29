@@ -1,0 +1,477 @@
+/* ==========================================================================
+   COMMITTEE DOSSIER ACTIVATION — cinematic per-committee themes
+   Phase A selection response (node pulse + line pulse + themed border),
+   Phase B dossier initialization (status line, sweep, particles),
+   Phase C committee reveal (motif, headline, supporting line),
+   Phase D mission dossier (staggered reveal of the real data).
+   Driven by the DOS_THEMES config in js/galaxy.js; the panel content,
+   fees, agendas, portfolios and registration flow are untouched.
+   ========================================================================== */
+.dossier {
+  --th-a: var(--violet);
+  --th-b: var(--blue);
+  --th-glow: 143, 123, 255;
+  --th-soft: rgba(143, 123, 255, 0.14);
+  --th-mist: rgba(143, 123, 255, 0.07);
+  --th-motif-display: var(--font-display);
+  transition:
+    background 420ms ease,
+    border-color 420ms ease,
+    box-shadow 420ms ease;
+}
+.dossier.is-activating {
+  border-color: rgba(var(--th-glow), 0.5);
+  box-shadow:
+    0 0 0 1px rgba(var(--th-glow), 0.14),
+    0 0 34px rgba(var(--th-glow), 0.14),
+    inset 0 0 44px rgba(var(--th-glow), 0.07);
+}
+/* faux column keeps the real .dossier__inner grid slot stable in all states */
+.dossier-fx {
+  grid-column: 1;
+  grid-row: 1;
+  max-height: 300px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height 420ms ease, opacity 300ms ease;
+}
+/* Phase B: initialization state (brief, then Phase C/D take over) */
+.dossier.is-initializing {
+  border-color: rgba(var(--th-glow), 0.42);
+  box-shadow:
+    0 0 0 1px rgba(var(--th-glow), 0.12),
+    0 0 26px rgba(var(--th-glow), 0.1),
+    inset 0 0 30px rgba(var(--th-glow), 0.05);
+}
+.dossier.is-initializing .dossier__motif,
+.dossier.is-initializing .dossier__intro,
+.dossier.is-initializing .dossier__rule {
+  display: none;
+}
+/* When active, the fx layer takes the first slot and the real inner moves
+   to slot 2; the transition swaps them at the same instant, so the frame
+   with both visible never overlaps visually. */
+.dossier.is-initializing .dossier-fx { grid-row: 1; }
+.dossier.is-initializing .dossier__inner { grid-row: 2; visibility: hidden; }
+/* cleared: fx row collapses, real inner back in slot 1, height animates */
+.dossier:not(.is-initializing) .dossier-fx {
+  grid-row: 2;
+  visibility: hidden;
+  max-height: 0;
+  opacity: 0;
+}
+.dossier:not(.is-initializing) .dossier__inner { grid-row: 1; }
+.dossier__inner {
+  grid-row: 1;
+  max-height: 900px;
+  overflow: hidden;
+  transition: max-height 420ms ease, opacity 300ms ease;
+}
+/* Phase B entry: the previous dossier content drops away while the boot
+   state takes over (smooth height morph, no jump) */
+.dossier.is-animating-out .dossier__inner {
+  max-height: 0;
+  opacity: 0;
+}
+/* Always-on themed atmosphere (committee accent + one deep tone for depth) */
+.dossier.is-themed {
+  --th-deep: color-mix(in srgb, var(--th-a) 14%, #04060d);
+  background:
+    radial-gradient(120% 90% at 12% 0%, var(--th-soft), transparent 60%),
+    radial-gradient(110% 100% at 88% 100%, var(--th-mist), transparent 58%),
+    linear-gradient(165deg, var(--th-deep), rgba(4, 6, 13, 0.94) 62%);
+}
+.dossier__inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(var(--th-glow), 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--th-glow), 0.05) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(90% 80% at 50% 20%, #000 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(90% 80% at 50% 20%, #000 30%, transparent 78%);
+  transition: opacity 380ms ease;
+}
+.dossier:not(.is-themed) .dossier__inner::after { opacity: 0; }
+/* Phase A: light sweep across the panel border layer */
+.dossier__sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+}
+.dossier.is-initializing .dossier__sweep { opacity: 1; }
+.dossier__sweep::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -60%;
+  width: 55%;
+  height: 140%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(var(--th-glow), 0.09) 42%,
+    rgba(var(--th-glow), 0.2) 50%,
+    rgba(var(--th-glow), 0.09) 58%,
+    transparent
+  );
+  transform: skewX(-12deg);
+}
+.dossier__sweep::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--th-glow), 0.55), transparent);
+  opacity: 0;
+}
+/* the sweep restarts on every activation via .is-sweeping (JS re-trigger) */
+.dossier__sweep.is-sweeping::before {
+  animation: dos-sweep 620ms ease-out forwards;
+}
+.dossier__sweep.is-sweeping::after {
+  animation: dos-scanline 1.15s ease-out 80ms forwards;
+}
+@keyframes dos-sweep {
+  from { left: -60%; }
+  to { left: 110%; }
+}
+@keyframes dos-scanline {
+  0% { top: 12%; opacity: 0; }
+  18% { opacity: 0.8; }
+  82% { opacity: 0.55; }
+  100% { top: 92%; opacity: 0; }
+}
+
+/* ---------- Phase B: status line ---------- */
+.dossier__boot {
+  min-height: 148px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  text-align: center;
+}
+.dossier__boot-label {
+  margin: 0;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(var(--th-glow), 0.92);
+  text-shadow: 0 0 12px rgba(var(--th-glow), 0.35);
+}
+.dossier__boot-track {
+  width: min(240px, 70%);
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(var(--th-glow), 0.16);
+  overflow: hidden;
+}
+.dossier__boot-track::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--th-a), transparent);
+  animation: dos-boot 950ms ease-in-out infinite;
+}
+@keyframes dos-boot {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.dossier__boot-meta {
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ---------- Phase C: committee-specific visual motif ---------- */
+.dossier__motif {
+  position: relative;
+  height: 118px;
+  margin-bottom: 0.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--th-glow), 0.18);
+  background:
+    radial-gradient(90% 130% at 50% 0%, var(--th-soft), transparent 72%),
+    rgba(4, 6, 13, 0.32);
+  animation: dos-float 7s ease-in-out infinite alternate;
+}
+@keyframes dos-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+.dossier__motif svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dossier__motif-tag {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(var(--th-glow), 0.85);
+  text-shadow: 0 0 14px rgba(var(--th-glow), 0.45);
+}
+
+/* motif accents (colors resolved per committee via --th-* tokens) */
+.dos-motif-wire { stroke: var(--th-a); }
+.dos-motif-fill { fill: var(--th-a); }
+.dos-motif-dim { stroke: var(--th-b); opacity: 0.5; }
+.dos-motif-glow {
+  filter: drop-shadow(0 0 5px rgba(var(--th-glow), 0.75));
+}
+.dos-motif-anim-wire {
+  stroke: var(--th-a);
+  stroke-dasharray: 5 9;
+  animation: dos-wire 3.2s linear infinite;
+}
+@keyframes dos-wire {
+  to { stroke-dashoffset: -56; }
+}
+.dos-motif-anim-orbit {
+  transform-origin: 60px 59px;
+  animation: dos-orbit 16s linear infinite;
+}
+@keyframes dos-orbit {
+  to { transform: rotate(360deg); }
+}
+.dos-motif-anim-pulse {
+  animation: dos-arc 2.6s ease-in-out infinite;
+}
+@keyframes dos-arc {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+.dos-motif-anim-pulse2 {
+  animation: dos-arc 2.6s ease-in-out 1.3s infinite;
+}
+.dos-motif-beam {
+  transform-origin: 100px 118px;
+  animation: dos-beam 5.4s ease-in-out infinite alternate;
+}
+@keyframes dos-beam {
+  from { transform: rotate(-4deg); opacity: 0.55; }
+  to { transform: rotate(4deg); opacity: 0.95; }
+}
+.dos-motif-beam--b { animation-delay: 1.4s; }
+.dos-motif-rise {
+  animation: dos-rise 4.2s ease-in-out infinite alternate;
+}
+@keyframes dos-rise {
+  from { transform: translateY(0); opacity: 0.65; }
+  to { transform: translateY(-4px); opacity: 1; }
+}
+.dos-motif-spark {
+  animation: dos-arc 2.2s ease-in-out infinite;
+}
+.dos-motif-spark--b { animation-delay: 0.7s; }
+.dos-motif-spark--c { animation-delay: 1.4s; }
+.dos-motif-bid {
+  animation: dos-bid 2.1s ease-in-out infinite;
+}
+@keyframes dos-bid {
+  0%, 100% { transform: translateY(2px); opacity: 0.4; }
+  50% { transform: translateY(-2px); opacity: 1; }
+}
+.dos-motif-bid--b { animation-delay: 0.55s; }
+.dos-motif-bid--c { animation-delay: 1.1s; }
+.dos-motif-wave {
+  animation: dos-wave 2.4s ease-in-out infinite;
+}
+@keyframes dos-wave {
+  0%, 100% { transform: scaleY(0.65); opacity: 0.55; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+.dos-motif-wave--b { animation-delay: 0.3s; }
+.dos-motif-wave--c { animation-delay: 0.6s; }
+.dos-motif-wave--d { animation-delay: 0.9s; }
+.dos-motif-flash {
+  animation: dos-arc 3.4s ease-in-out infinite;
+}
+.dos-motif-flash--b { animation-delay: 1.2s; }
+.dos-motif-mote {
+  animation: dos-mote 5s ease-in-out infinite;
+}
+@keyframes dos-mote {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(-6px); opacity: 1; }
+}
+.dos-motif-mote--b { animation-delay: 1.2s; }
+.dos-motif-mote--c { animation-delay: 2.4s; }
+.dos-motif-mote--d { animation-delay: 3.4s; }
+.dos-motif-star {
+  animation: dos-arc 2.8s ease-in-out infinite;
+}
+.dos-motif-star--b { animation-delay: 0.9s; }
+.dos-motif-star--c { animation-delay: 1.8s; }
+
+/* ---------- Phase C: headline + supporting line ---------- */
+.dossier__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: center;
+  padding: 0.1rem 0.2rem 0.2rem;
+}
+.dossier__intro-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.6vw, 2.05rem);
+  line-height: 1.12;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-shadow: 0 0 26px rgba(var(--th-glow), 0.3);
+  animation: dos-headline 640ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+@keyframes dos-headline {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+.dossier__intro-sub {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  animation: dos-rise-in 560ms cubic-bezier(0.19, 1, 0.22, 1) 240ms both;
+}
+@keyframes dos-rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* hard rule between intro and dossier data */
+.dossier__rule {
+  height: 1px;
+  border: none;
+  margin: 0;
+  background: linear-gradient(90deg, transparent, rgba(var(--th-glow), 0.5), transparent);
+  animation: dos-rise-in 520ms ease 300ms both;
+}
+
+/* ---------- Phase D: staggered real dossier data ---------- */
+.dossier__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.dossier.is-staged .dossier__head,
+.dossier.is-staged .dossier__meta,
+.dossier.is-staged .dossier__portfolios,
+.dossier.is-staged .dossier__inner .btn {
+  animation: dos-stage 520ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+.dossier.is-staged .dossier__head { animation-delay: 340ms; }
+.dossier.is-staged .dossier__meta { animation-delay: 430ms; }
+.dossier.is-staged .dossier__portfolios { animation-delay: 520ms; }
+.dossier.is-staged .dossier__inner .btn { animation-delay: 600ms; }
+@keyframes dos-stage {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* themed focus ring on the search input + register button hover accent */
+.dossier.is-themed .dossier-search:focus {
+  border-color: var(--th-a);
+  box-shadow: 0 0 0 3px rgba(var(--th-glow), 0.2);
+}
+.dossier__type.is-accent {
+  color: var(--th-a);
+  text-shadow: 0 0 12px rgba(var(--th-glow), 0.35);
+}
+.dossier__fee.is-accent { color: var(--th-a); }
+
+/* ---------- Phase A: selection response on the map ---------- */
+.galaxy__node.is-selected .galaxy__node-planet {
+  animation: dos-node-pulse 720ms ease-out 1;
+}
+@keyframes dos-node-pulse {
+  0% { box-shadow: 0 0 34px rgba(var(--node-glow), 0.95), inset -5px -6px 10px rgba(2, 3, 8, 0.55); }
+  100% { box-shadow: 0 0 22px rgba(var(--node-glow), 0.85), inset -5px -6px 10px rgba(2, 3, 8, 0.55); }
+}
+.galaxy__links line.is-pulsing {
+  animation: dos-line-pulse 900ms ease-out 1;
+}
+@keyframes dos-line-pulse {
+  0% { opacity: 0.4; }
+  30% {
+    stroke: rgba(var(--node-glow), 0.85);
+    filter: drop-shadow(0 0 4px rgba(var(--node-glow), 0.6));
+    opacity: 1;
+  }
+  100% { opacity: 0.85; }
+}
+
+/* ---------- reduced motion: static, complete states ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .dossier__sweep,
+  .dossier__sweep::before,
+  .dossier__sweep::after,
+  .dossier__boot-track::before { animation: none !important; }
+  .dossier__motif,
+  .dossier__intro-title,
+  .dossier__intro-sub,
+  .dossier__rule,
+  .dossier.is-staged .dossier__head,
+  .dossier.is-staged .dossier__meta,
+  .dossier.is-staged .dossier__portfolios,
+  .dossier.is-staged .dossier__inner .btn,
+  .galaxy__node.is-selected .galaxy__node-planet,
+  .galaxy__links line.is-pulsing {
+    animation: none;
+  }
+  .dossier__motif svg * { animation: none; }
+}
+
+/* ---------- mobile sheet: same committee theme, desktop parity ----------
+   The activation sets --th-* and .is-themed on the sheet root; the panel
+   (not the fixed full-screen root) carries the themed surface so the
+   gradient and committee top bar stay inside the bottom sheet. */
+.sheet.is-themed .sheet__panel {
+  --th-deep: color-mix(in srgb, var(--th-a) 14%, #04060d);
+  background:
+    radial-gradient(120% 90% at 12% 0%, var(--th-soft), transparent 60%),
+    radial-gradient(110% 100% at 88% 100%, var(--th-mist), transparent 58%),
+    linear-gradient(165deg, var(--th-deep), rgba(4, 6, 13, 0.94) 62%);
+  border-top-color: rgba(var(--th-glow), 0.45);
+}
+.sheet.is-themed .sheet__panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 1;
+  background: linear-gradient(90deg, var(--th-a), var(--th-b));
+}
+.sheet.is-themed .sheet__head,
+.sheet.is-themed .sheet__body {
+  position: relative;
+}
+.sheet.is-themed .dossier-search:focus {
+  border-color: var(--th-a);
+  box-shadow: 0 0 0 3px rgba(var(--th-glow), 0.2);
+}
+.sheet.is-themed .dossier__type.is-accent {
+  color: var(--th-a);
+  text-shadow: 0 0 12px rgba(var(--th-glow), 0.35);
+}
+.sheet.is-themed .dossier__fee.is-accent { color: var(--th-a); }

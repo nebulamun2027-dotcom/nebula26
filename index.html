@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEBULA MUN 2026 — Nurture. Empower. Lead. | Model United Nations, Meerut</title>
+  <meta name="description" content="NEBULA MUN 2026, a prestigious Model United Nations conference in Meerut, India. 26–27 December 2026 at MSM. Eight committees, one voice. Registrations are now open." />
+  <meta name="theme-color" content="#04060d" />
+  <meta property="og:title" content="NEBULA MUN 2026 — Nurture. Empower. Lead." />
+  <meta property="og:description" content="A prestigious Model United Nations conference in Meerut. 26–27 December 2026, MSM. Eight committees. One voice." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/dossier-activation.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2305070f'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='4.6' fill='none' stroke='%238f7bff' stroke-width='1.2' transform='rotate(-24 16 16)'/%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%23b7a9ff'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <!-- ======= PHASE 4: THE NEBULA GATEWAY — cinematic entrance ======= -->
+  <div class="gateway" id="gateway" hidden>
+    <canvas id="gateway-canvas" aria-hidden="true"></canvas>
+    <div class="gw-grain" aria-hidden="true"></div>
+    <div class="gw-letterbox gw-letterbox--top" aria-hidden="true"></div>
+    <div class="gw-letterbox gw-letterbox--bottom" aria-hidden="true"></div>
+
+    <!-- stage A: signal detected -->
+    <div class="gw-stage gw-stage--signal" id="gw-signal">
+      <p class="gw-signal__pre">AN INTERSTELLAR TRANSMISSION</p>
+      <h2 class="gw-signal__title">SIGNAL DETECTED</h2>
+      <p class="gw-signal__sub">Decoding a broadcast from the floor of the universe…</p>
+    </div>
+
+    <!-- stage B: gate activation / titles -->
+    <div class="gw-stage gw-stage--title" id="gw-title">
+      <p class="gw-title__pre">COORDINATES LOCKED · SECTOR 26–27 · DEC 2026</p>
+      <h2 class="gw-title__main">
+        <span class="gw-title__line"><span>NEBULA</span></span>
+        <span class="gw-title__line"><span>MUN <em class="gw-title__year">2026</em></span></span>
+      </h2>
+      <p class="gw-title__tag"><em>Nurture.</em> <em>Empower.</em> <em>Lead.</em></p>
+      <p class="gw-title__meta">26–27 DECEMBER 2026 · MSM · MEERUT</p>
+    </div>
+
+    <!-- stage C: access panel -->
+    <div class="gw-stage gw-stage--panel" id="gw-panel">
+      <div class="gw-card">
+        <p class="gw-card__eyebrow">NEBULA MUN 2026</p>
+        <h2 class="gw-card__title">THE GATEWAY IS READY</h2>
+        <p class="gw-card__quote">Eight worlds. One universe of diplomacy.</p>
+        <div class="gw-card__rule" aria-hidden="true"></div>
+        <div class="gw-card__actions">
+          <button class="gw-card__enter" id="gw-enter" type="button">INITIATE ENTRY</button>
+          <button class="gw-card__ghost" id="gw-ghost" type="button">ENTER THE UNIVERSE</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="gw-skip gw-hidden" id="gw-skip" type="button">SKIP INTRO</button>
+  </div>
+
+  <a class="skip-link" href="#home">Skip to content</a>
+
+  <!-- ======= Decorative sky: WebGL cinematic nebula + 2D star field ======= -->
+  <div class="sky" aria-hidden="true">
+    <canvas id="nebula-gl" class="sky__gl"></canvas>
+    <canvas id="nebula-2d" class="sky__gl sky__gl--2d" style="display:none"></canvas>
+    <canvas id="starfield" aria-hidden="true"></canvas>
+    <div class="sky__vignette"></div>
+  </div>
+
+  <!-- ======= 1. Sticky announcement bar ======= -->
+  <div class="announce" role="region" aria-label="Announcement">
+    <div class="announce__marquee">
+      <div class="announce__track">
+        <span class="announce__text">REGISTRATIONS ARE NOW OPEN <span class="announce__sep">-</span> SECURE YOUR PREFERRED PORTFOLIO BEFORE SLOTS FILL UP. <span class="announce__pad"></span></span>
+        <span class="announce__text" aria-hidden="true">REGISTRATIONS ARE NOW OPEN <span class="announce__sep">-</span> SECURE YOUR PREFERRED PORTFOLIO BEFORE SLOTS FILL UP. <span class="announce__pad"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= 2. Navigation ======= -->
+  <header class="nav" id="top">
+    <nav class="nav__inner" aria-label="Primary">
+      <a class="brand" href="#home">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="30" height="30" fill="none">
+            <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-opacity="0.35" />
+            <ellipse cx="16" cy="16" rx="12.5" ry="4.4" stroke="currentColor" stroke-opacity="0.8" transform="rotate(-24 16 16)" />
+            <circle cx="16" cy="16" r="3.6" fill="currentColor" />
+          </svg>
+        </span>
+        <span class="brand__word">NEBULA<span class="brand__year">26</span></span>
+      </a>
+
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+        <span class="nav__toggle-bar" aria-hidden="true"></span>
+        <span class="nav__toggle-bar" aria-hidden="true"></span>
+      </button>
+
+      <div class="nav__menu" id="nav-menu">
+        <ul class="nav__links">
+          <li><a href="#home" class="nav__link is-active" data-nav>Home</a></li>
+          <li><a href="#about" class="nav__link" data-nav>About</a></li>
+          <li><a href="#committees" class="nav__link" data-nav>Committees</a></li>
+          <li><a href="#conference" class="nav__link" data-nav>Conference</a></li>
+          <li><a href="#contact" class="nav__link" data-nav>Contact</a></li>
+        </ul>
+        <button type="button" data-open-register class="btn btn--primary btn--sm">Register</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ======= 3. Hero ======= -->
+    <section class="hero" id="home">
+      <div class="hero__ring" aria-hidden="true"></div>
+      <div class="hero__inner">
+        <p class="hero__kicker" data-reveal>
+          <span class="hero__kicker-line" aria-hidden="true"></span>
+          Model United Nations Conference, Meerut
+        </p>
+
+        <h1 class="hero__title" data-reveal data-delay="80">
+          <span class="hero__title-line"><span>NEBULA</span></span>
+          <span class="hero__title-line"><span>MUN <em class="hero__mono">2026</em></span></span>
+        </h1>
+
+        <p class="hero__tagline" data-reveal data-delay="160">
+          <em>Nurture.</em> <em>Empower.</em> <em>Lead.</em>
+        </p>
+
+        <div class="hero__meta" data-reveal data-delay="240">
+          <p class="hero__date">
+            <span class="hero__date-main">26<span class="hero__en">–</span>27</span>
+            <span class="hero__date-sub">December 2026</span>
+          </p>
+          <span class="hero__meta-div" aria-hidden="true"></span>
+          <p class="hero__venue">
+            <span class="hero__venue-name">MSM</span>
+            <span class="hero__venue-sub">Meerut, India</span>
+          </p>
+        </div>
+
+        <div class="hero__cta" data-reveal data-delay="320">
+          <a class="btn btn--primary" href="#committees">Explore Committees</a>
+          <button type="button" data-open-register class="btn btn--ghost">Register</button>
+        </div>
+
+        <!-- 4. Live countdown -->
+        <div class="countdown" data-reveal data-delay="400" role="timer" aria-label="Countdown to the conference, 26 December 2026">
+          <div class="countdown__cell">
+            <span class="countdown__value" id="cd-days">00</span>
+            <span class="countdown__label">Days</span>
+          </div>
+          <span class="countdown__colon" aria-hidden="true">:</span>
+          <div class="countdown__cell">
+            <span class="countdown__value" id="cd-hours">00</span>
+            <span class="countdown__label">Hours</span>
+          </div>
+          <span class="countdown__colon" aria-hidden="true">:</span>
+          <div class="countdown__cell">
+            <span class="countdown__value" id="cd-mins">00</span>
+            <span class="countdown__label">Minutes</span>
+          </div>
+          <span class="countdown__colon" aria-hidden="true">:</span>
+          <div class="countdown__cell">
+            <span class="countdown__value" id="cd-secs">00</span>
+            <span class="countdown__label">Seconds</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__fade" aria-hidden="true"></div>
+    </section>
+
+    <!-- ======= 5. About / Introduction ======= -->
+    <section class="about section" id="about">
+      <!-- Celestial Diplomacy Chamber: 3D background layer (WebGL, with 2D fallback) -->
+      <div class="about-chamber" aria-hidden="true">
+        <canvas id="about-chamber"></canvas>
+        <canvas id="about-chamber-2d"></canvas>
+      </div>
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">The Conference</p>
+          <h2 class="section-title">
+            Where ideas take the floor,
+            <em>and stand.</em>
+          </h2>
+        </div>
+
+        <div class="about__grid">
+          <p class="about__lead" data-reveal>
+            NEBULA MUN is a two-day Model United Nations conference in Meerut where
+            delegates move through the full arc of diplomacy: rigorous research,
+            sharp negotiation, persuasive public speaking and the calm authority
+            of principled leadership. It is a floor built for the position paper
+            that lands, the amendment that holds, and the voice that carries a
+            room of one hundred strangers.
+          </p>
+          <p class="about__body" data-reveal data-delay="80">
+            Over two days, eight committees carry delegates from clause to
+            clause and crisis to resolution. Come prepared to research deep,
+            argue clean and negotiate under pressure: because on the NEBULA
+            floor, the briefest sentence in the room is often the one that
+            changes the outcome.
+          </p>
+        </div>
+
+        <!-- 5.1 The craft: five disciplines as an editorial index -->
+        <div class="craft" data-reveal>
+          <div class="craft__item">
+            <span class="craft__num">01</span>
+            <div class="craft__body">
+              <h3 class="craft__name">Diplomacy</h3>
+              <p class="craft__desc">Build bridges one clause at a time, and turn strangers into co-sponsors.</p>
+            </div>
+          </div>
+          <div class="craft__item">
+            <span class="craft__num">02</span>
+            <div class="craft__body">
+              <h3 class="craft__name">Negotiation</h3>
+              <p class="craft__desc">Trade, hold, close. Learn where a position bends and where it must not.</p>
+            </div>
+          </div>
+          <div class="craft__item">
+            <span class="craft__num">03</span>
+            <div class="craft__body">
+              <h3 class="craft__name">Research</h3>
+              <p class="craft__desc">Evidence is ammunition. The briefest, best-researched line usually wins the point.</p>
+            </div>
+          </div>
+          <div class="craft__item">
+            <span class="craft__num">04</span>
+            <div class="craft__body">
+              <h3 class="craft__name">Public Speaking</h3>
+              <p class="craft__desc">Find the voice that holds a hundred delegates through a full session.</p>
+            </div>
+          </div>
+          <div class="craft__item">
+            <span class="craft__num">05</span>
+            <div class="craft__body">
+              <h3 class="craft__name">Leadership</h3>
+              <p class="craft__desc">Lead a bloc, a resolution, a room. Influence is earned in public, one decision at a time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= 6. Committees preview grid ======= -->
+    <section class="committees section" id="committees">
+      <div class="container">
+        <div class="section-head section-head--row" data-reveal>
+          <div>
+            <p class="eyebrow">The Nebula Galaxy Archive</p>
+            <h2 class="section-title galaxy-title">Your universe <em>awaits.</em></h2>
+            <p class="galaxy-tagline">Eight worlds. One universe of diplomacy. Choose your world, shape the debate, leave your mark.</p>
+          </div>
+          <p class="section-head__note">
+            Each of the eight destinations below is a real committee. Select one
+            to open its mission dossier — agenda, fee and the full portfolio
+            matrix, with a direct path into registration.
+          </p>
+        </div>
+
+        <!-- ======= 6a. The NEBULA GALAXY: interactive star map (desktop) ======= -->
+        <div class="galaxy-layout" data-reveal>
+          <div class="galaxy-stage">
+            <div class="galaxy-hud" aria-hidden="true">
+              <span class="galaxy-hud__item"><span class="galaxy-hud__dot" style="--c:var(--blue)"></span>NAV LOCKED</span>
+              <span class="galaxy-hud__item"><span class="galaxy-hud__dot" style="--c:var(--violet)"></span>SCAN · 8 WORLDS</span>
+              <span class="galaxy-hud__item"><span class="galaxy-hud__dot" style="--c:var(--teal)"></span>DRAFT SAVED LOCALLY</span>
+            </div>
+            <div class="galaxy" id="galaxy" role="tablist" aria-label="NEBULA GALAXY — eight committee destinations">
+              <div class="galaxy__core" aria-hidden="true">
+                <span class="galaxy__core-glow"></span>
+                <span class="galaxy__core-orbit galaxy__core-orbit--a"></span>
+                <span class="galaxy__core-orbit galaxy__core-orbit--b"></span>
+                <span class="galaxy__core-mark" aria-hidden="true">N</span>
+              </div>
+              <div class="galaxy__field" id="galaxy-field" aria-hidden="true"></div>
+            </div>
+            <p class="galaxy-hint">
+              <span class="galaxy-hint__pulse" aria-hidden="true"></span>
+              Select any glowing world to open its mission dossier.
+            </p>
+          </div>
+
+          <!-- ======= 6b. Mission dossier: desktop panel ======= -->
+          <aside class="dossier" id="dossier" aria-label="Mission dossier">
+            <div class="dossier__inner">
+              <header class="dossier__head">
+                <p class="eyebrow" id="dossier-num">Committee 01</p>
+                <h3 class="dossier__title" id="dossier-short">Select a world</h3>
+                <p class="dossier__full" id="dossier-full">Choose a destination on the star map</p>
+                <p class="dossier__type" id="dossier-type"></p>
+              </header>
+              <p class="dossier__desc" id="dossier-desc">Each world on the map is a real committee — select one to read its full brief.</p>
+              <div class="dossier__meta">
+                <div class="dossier__meta-item">
+                  <span class="dossier__meta-label">Registration fee</span>
+                  <span class="dossier__fee" id="dossier-fee">—</span>
+                </div>
+                <div class="dossier__meta-item">
+                  <span class="dossier__meta-label">Agenda</span>
+                  <span class="dossier__agenda" id="dossier-agenda">To Be Announced Shortly</span>
+                </div>
+              </div>
+              <div class="dossier__portfolios">
+                <div class="dossier__port-head">
+                  <h4>Portfolio availability</h4>
+                  <input class="dossier-search" id="dossier-search" type="search" placeholder="Search portfolios…" aria-label="Search portfolios" />
+                </div>
+                <div class="dossier__matrix" id="dossier-matrix"></div>
+                <p class="dossier__count" id="dossier-count"></p>
+              </div>
+              <button class="btn btn--primary" type="button" id="dossier-register">Register for this committee</button>
+            </div>
+          </aside>
+        </div>
+
+        <!-- ======= 6c. Mission dossier: mobile sheet (small screens) ======= -->
+        <div class="sheet" id="sheet" hidden aria-hidden="true">
+          <div class="sheet__scrim" data-sheet-close></div>
+          <div class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+            <button class="sheet__close" type="button" data-sheet-close aria-label="Close dossier">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+            <header class="sheet__head">
+              <p class="eyebrow">Mission dossier</p>
+              <h3 class="sheet__title" id="sheet-title">Select a world</h3>
+            </header>
+            <div class="sheet__body" id="sheet-body"></div>
+          </div>
+        </div>
+
+        <p class="committees__foot" data-reveal>
+          Agendas are <em>to be announced shortly</em>; fees and the full
+          portfolio matrix are confirmed. Register straight from any dossier —
+          the world you view is preselected as your first choice.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======= 7. Conference details ======= -->
+    <section class="conference section" id="conference">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">The Conference</p>
+          <h2 class="section-title">Two days on the <em>floor.</em></h2>
+        </div>
+
+        <div class="conference__grid">
+          <div class="info-card" data-reveal>
+            <p class="info-card__label">Dates</p>
+            <p class="info-card__value">26 – 27 December 2026</p>
+            <p class="info-card__sub">A two-day conference</p>
+          </div>
+          <div class="info-card" data-reveal data-delay="60">
+            <p class="info-card__label">Venue</p>
+            <p class="info-card__value">MSM</p>
+            <p class="info-card__sub">Meerut, India</p>
+          </div>
+          <div class="info-card info-card--wide" data-reveal data-delay="120">
+            <p class="info-card__label">Dress Code</p>
+            <div class="dress">
+              <div class="dress__day">
+                <span class="dress__label">Day 1</span>
+                <span class="dress__value">Traditional Attire</span>
+              </div>
+              <span class="dress__div" aria-hidden="true"></span>
+              <div class="dress__day">
+                <span class="dress__label">Day 2</span>
+                <span class="dress__value">Formal Attire</span>
+              </div>
+            </div>
+            <p class="info-card__sub">Arrive as you wish to be remembered.</p>
+          </div>
+          <div class="info-card" data-reveal data-delay="180">
+            <p class="info-card__label">Status</p>
+            <p class="info-card__value">Registrations open</p>
+            <p class="info-card__sub">Portfolio matrix arrives with the delegate kit</p>
+          </div>
+        </div>
+
+        <p class="conference__note" data-reveal>
+          The detailed schedule and floor plan are shared with registered
+          delegates before the conference.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======= 7b. The Venue ======= -->
+    <section class="venue section" id="venue">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Find Your Way to NEBULA</p>
+          <h2 class="section-title">The <em>Venue.</em></h2>
+          <p class="section-head__note">
+            Everything delegates need to plan the trip — the venue, the city
+            and the live map — lives here. The address below was confirmed by
+            the organising team.
+          </p>
+        </div>
+
+        <div class="venue__layout" data-reveal data-delay="60">
+          <div class="venue__aside">
+            <div class="venue__accent" aria-hidden="true">
+              <span class="venue__ring venue__ring--a"></span>
+              <span class="venue__ring venue__ring--b"></span>
+              <span class="venue__ring venue__ring--c"></span>
+              <span class="venue__core"></span>
+            </div>
+            <p class="venue__kicker">The Conference · Venue</p>
+            <p class="venue__name" data-venue-name>MSM, Meerut</p>
+            <p class="venue__dates" data-venue-dates>26 – 27 December 2026</p>
+            <p class="venue__desc" data-venue-desc>
+              Delegates gather here for two days of diplomacy, debate and
+              negotiation — where the position paper lands, the amendment
+              holds and the resolution carries the floor.
+            </p>
+            <div class="venue__or">
+              <p class="venue__pending" data-venue-pending>
+                <strong>Full venue address will be announced by the organising team.</strong>
+                The interactive map and the exact location go live right here
+                as soon as the venue details are confirmed.
+              </p>
+              <p class="venue__addr" data-venue-address hidden></p>
+              <div class="venue__actions">
+                <a class="btn btn--primary btn--sm venue__cta" href="https://www.google.com/maps" target="_blank" rel="noopener" data-venue-dir>Get Directions</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="venue__mapcol">
+            <div class="venue__map-frame" data-venue-map hidden>
+              <iframe
+                class="venue__map"
+                title="Interactive Google Map showing the NEBULA MUN 2026 venue"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="venue__empty" data-venue-empty>
+              <div class="venue__accent venue__accent--md" aria-hidden="true">
+                <span class="venue__ring venue__ring--a"></span>
+                <span class="venue__ring venue__ring--b"></span>
+                <span class="venue__core"></span>
+              </div>
+              <p class="venue__empty-title">The venue pin lands here.</p>
+              <p class="venue__empty-sub">
+                An interactive Google Map with standard zoom and navigation
+                controls appears the moment the exact location is confirmed.
+              </p>
+            </div>
+            <p class="venue__badge"><span>NEBULA MUN 2026 · MSM, Meerut</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= 8. Final call to action ======= -->
+    <section class="cta section" id="register">
+      <div class="cta__glow" aria-hidden="true"></div>
+      <div class="container cta__inner">
+        <h2 class="cta__title" data-reveal>
+          <span class="cta__line">YOUR VOICE.</span>
+          <span class="cta__line">YOUR STANCE.</span>
+          <span class="cta__line cta__line--accent">YOUR NEBULA.</span>
+        </h2>
+        <p class="cta__body" data-reveal data-delay="120">
+          Registrations are now open. Claim your committee and your portfolio
+          before the floor fills up.
+        </p>
+        <div class="cta__actions" data-reveal data-delay="200">
+          <button
+            class="btn btn--primary btn--lg"
+            type="button"
+            data-open-register
+          >
+            Start Your Registration
+          </button>
+          <a class="link-quiet" href="mailto:yoganshuSharma786@gmail.com">
+            Questions? Write to the organising team
+          </a>
+        </div>
+        <p class="cta__note" data-reveal data-delay="260">
+          Registration and payment links go live here soon. Until then, every
+          official update lives on our
+          <a href="https://www.instagram.com/nebulamun/" target="_blank" rel="noopener noreferrer">Instagram</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======= 9. Footer / Contact ======= -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="brand brand--footer" href="#home">
+            <span class="brand__mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+                <circle cx="16" cy="16" r="12.5" stroke="currentColor" stroke-opacity="0.35" />
+                <ellipse cx="16" cy="16" rx="12.5" ry="4.4" stroke="currentColor" stroke-opacity="0.8" transform="rotate(-24 16 16)" />
+                <circle cx="16" cy="16" r="3.6" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="brand__word">NEBULA<span class="brand__year">26</span></span>
+          </a>
+          <p class="footer__tagline">
+            A Model United Nations conference in Meerut, India.
+            <br />Nurture. Empower. Lead.
+          </p>
+        </div>
+
+        <nav class="footer__col" aria-label="Footer">
+          <p class="footer__heading">Navigate</p>
+          <ul class="footer__list">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#committees">Committees</a></li>
+            <li><a href="#conference">Conference</a></li>
+            <li><button type="button" data-open-register class="footer__link-btn">Register</button></li>
+          </ul>
+        </nav>
+
+        <div class="footer__col">
+          <p class="footer__heading">Contact</p>
+          <ul class="footer__list">
+            <li><a href="tel:+919258108292">+91 92581 08292</a></li>
+            <li><a href="mailto:yoganshuSharma786@gmail.com">yoganshuSharma786@gmail.com</a></li>
+            <li>MSM, Meerut, India</li>
+            <li>26 – 27 December 2026</li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <p class="footer__heading">Follow</p>
+          <ul class="footer__list">
+            <li>
+              <a href="https://www.instagram.com/nebulamun/" target="_blank" rel="noopener noreferrer">
+                Instagram
+                <svg class="footer__ext" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </li>
+            <li>
+              <a href="https://linktr.ee/nebulamun2027" target="_blank" rel="noopener noreferrer">
+                Linktree
+                <svg class="footer__ext" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <p>© 2026 NEBULA MUN. All rights reserved.</p>
+        <button class="footer__replay" type="button" data-replay-gateway>REVISIT THE GATEWAY</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======= Phase 2: registration wizard modal ======= -->
+  <div class="modal" id="register-modal" hidden aria-hidden="true">
+    <div class="modal__backdrop" data-close-register></div>
+    <div class="modal__panel reg-panel" role="dialog" aria-modal="true" aria-labelledby="reg-title">
+      <button class="modal__close" type="button" data-close-register aria-label="Close registration">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="reg">
+        <header class="reg__head">
+          <p class="eyebrow">Delegation Registration</p>
+          <h2 class="reg__title" id="reg-title">Join the NEBULA MUN 2026 floor</h2>
+          <p class="reg__sub">Five short steps: your details, three committee choices, your top portfolios, your MUN history, then a final review.</p>
+        </header>
+
+        <ol class="reg__rail" aria-label="Registration steps">
+          <li class="reg__rail-step is-current" data-rail="1"><span>1</span><span class="reg__rail-label">Details</span></li>
+          <li class="reg__rail-step" data-rail="2"><span>2</span><span class="reg__rail-label">Committees</span></li>
+          <li class="reg__rail-step" data-rail="3"><span>3</span><span class="reg__rail-label">Portfolios</span></li>
+          <li class="reg__rail-step" data-rail="4"><span>4</span><span class="reg__rail-label">Experience</span></li>
+          <li class="reg__rail-step" data-rail="5"><span>5</span><span class="reg__rail-label">Review</span></li>
+        </ol>
+
+        <form id="reg-form" novalidate>
+          <!-- Step 1: personal information -->
+          <div class="reg__pane" data-pane="1">
+            <div class="reg__fields">
+              <div class="reg__field">
+                <label for="reg-name">Full name <span class="reg__req" aria-hidden="true">*</span></label>
+                <input class="reg__input" id="reg-name" type="text" required autocomplete="name" placeholder="e.g. Aarav Sharma" />
+                <p class="reg__err" id="err-name" role="alert"></p>
+              </div>
+              <div class="reg__field">
+                <label for="reg-email">Email address <span class="reg__req" aria-hidden="true">*</span></label>
+                <input class="reg__input" id="reg-email" type="email" required autocomplete="email" placeholder="you@school.edu" />
+                <p class="reg__err" id="err-email" role="alert"></p>
+              </div>
+              <div class="reg__field">
+                <label for="reg-phone">Phone / WhatsApp <span class="reg__req" aria-hidden="true">*</span></label>
+                <input class="reg__input" id="reg-phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="+91 …" />
+                <p class="reg__err" id="err-phone" role="alert"></p>
+              </div>
+              <div class="reg__field">
+                <label for="reg-institution">School / College / Institution <span class="reg__req" aria-hidden="true">*</span></label>
+                <input class="reg__input" id="reg-institution" type="text" required autocomplete="organization" placeholder="Your school or university" />
+                <p class="reg__err" id="err-institution" role="alert"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: committee preferences -->
+          <div class="reg__pane" data-pane="2" hidden>
+            <div class="reg__prefs">
+              <div class="reg__field">
+                <label for="reg-pref1">First choice committee <span class="reg__req" aria-hidden="true">*</span></label>
+                <select class="reg__input reg__select" id="reg-pref1" required>
+                  <option value="" selected disabled>Choose a committee…</option>
+                </select>
+                <p class="reg__fee-chip" id="fee-pref1"></p>
+                <p class="reg__err" id="err-pref1" role="alert"></p>
+              </div>
+              <div class="reg__field">
+                <label for="reg-pref2">Second choice committee <span class="reg__req" aria-hidden="true">*</span></label>
+                <select class="reg__input reg__select" id="reg-pref2" required>
+                  <option value="" selected disabled>Choose a committee…</option>
+                </select>
+                <p class="reg__fee-chip" id="fee-pref2"></p>
+                <p class="reg__err" id="err-pref2" role="alert"></p>
+              </div>
+              <div class="reg__field">
+                <label for="reg-pref3">Third choice committee <span class="reg__req" aria-hidden="true">*</span></label>
+                <select class="reg__input reg__select" id="reg-pref3" required>
+                  <option value="" selected disabled>Choose a committee…</option>
+                </select>
+                <p class="reg__fee-chip" id="fee-pref3"></p>
+                <p class="reg__err" id="err-pref3" role="alert"></p>
+              </div>
+            </div>
+            <p class="reg__note">The committee you viewed opens the form with it already set as your first choice. The payable amount is <em>To Be Confirmed by Organisers</em> — we will not add up all three fees.</p>
+          </div>
+
+          <!-- Step 3: portfolio preferences -->
+          <div class="reg__pane" data-pane="3" hidden>
+            <div class="reg__port">
+              <p class="reg__port-hint">Pick up to <strong>three</strong> portfolios in ranked order (1 = most wanted) from your first-choice committee.</p>
+              <input class="reg__input" id="reg-port-search" type="search" placeholder="Search portfolios…" aria-label="Search portfolios" />
+              <div class="reg__port-grid" id="reg-port-grid"></div>
+              <div class="reg__port-custom">
+                <label for="reg-port-custom">Prefer a portfolio that isn’t listed?</label>
+                <input class="reg__input" id="reg-port-custom" type="text" placeholder="Type it here — it will be passed to the organisers" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: MUN experience -->
+          <div class="reg__pane" data-pane="4" hidden>
+            <div class="reg__fields">
+              <div class="reg__field">
+                <label for="reg-muns">MUNs previously attended <span class="reg__req" aria-hidden="true">*</span></label>
+                <input class="reg__input" id="reg-muns" type="number" min="0" step="1" required inputmode="numeric" placeholder="0" />
+                <p class="reg__err" id="err-muns" role="alert"></p>
+              </div>
+              <div class="reg__field">
+                <label for="reg-awards">Awards won / prior experience</label>
+                <textarea class="reg__input reg__textarea" id="reg-awards" rows="4" placeholder="Best Paper, Outstanding Committee, prior conference history… (optional)"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: review and submit -->
+          <div class="reg__pane" data-pane="5" hidden>
+            <h3 class="reg__review-title">Review your registration</h3>
+            <dl class="reg__review" id="reg-review"></dl>
+            <div class="reg__feebox" id="reg-feebox"></div>
+            <div class="reg__privacy">
+              <p><strong>Privacy &amp; submission note:</strong> This is a <em>demo / local-only</em> submission. Your data is not sent to the organisers until a backend is connected in Phase 3 (database, payment-proof upload and admin dashboard). No payment QR, UPI ID or transaction data is collected or fabricated.</p>
+            </div>
+          </div>
+
+          <div class="reg__confirm" hidden>
+            <div class="reg__confirm-inner">
+              <div class="reg__confirm-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6L9 17l-5-5"/></svg>
+              </div>
+              <h3>Registration received</h3>
+              <p id="reg-confirm-text">Your details are saved locally on this device only. Once the organisers’ backend is live, your registration will be synced.</p>
+              <p class="reg__confirm-hint">Final payable amount: <strong>To Be Confirmed by Organisers</strong>.</p>
+            </div>
+          </div>
+
+          <footer class="reg__nav">
+            <button class="btn btn--ghost btn--sm" type="button" id="reg-prev">Back</button>
+            <button class="btn btn--primary btn--sm" type="button" id="reg-next">Continue</button>
+            <button class="btn btn--primary" type="submit" id="reg-submit" hidden>Submit registration</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/venue.js"></script>
+  <script src="js/nebula.js" defer></script>
+  <script src="js/about-chamber.js" defer></script>
+  <script src="js/gateway.js" defer></script>
+  <script src="js/gateway-sequence.js" defer></script>
+  <script src="js/galaxy.js" defer></script>
+  <script src="js/register.js" defer></script>
+</body>
+</html>
