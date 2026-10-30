@@ -27,11 +27,12 @@ Then browse to `http://localhost:8080`.
 ```
 index.html        single-page site: nav, hero, committees-as-galaxy, modals, footer
 css/styles.css     design system: tokens, star field, nebula, modals, galaxy archive
+css/dossier-activation.css  cinematic per-committee activation motifs + Phase A–D motion for the mission dossier
 js/data.js         single source of truth: COMMITTEES + portfolio/group data + helpers
-js/main.js         star-field canvas (now with parallax, pulsing galactic light, occasional shooting stars), countdown, reveal-on-scroll, tilt
+js/main.js         star-field canvas (parallax, pulsing galactic light, occasional shooting stars), countdown, reveal-on-scroll, tilt
 js/nebula.js       cinematic space environment: WebGL volumetric nebula shader + 2D canvas fallback
 js/galaxy.js       galaxy map, mission dossier (desktop), mobile bottom sheet, register handoff
-js/register.js     committee detail was replaced; 5-step registration wizard (client-side only)
+js/register.js     5-step registration wizard (client-side only)
 js/gateway.js       Phase 4 gateway renderer: canvas rings, inward particles, energy pulses, filaments, parallax
 js/gateway-sequence.js  Phase 4 sequence controller: stages A (signal) → B (activation) → C (access panel) → D (exit/warp)
 js/about-chamber.js  About-section celestial diplomacy chamber: WebGL 3D scene (central planet, rings, three orbiting planets, particles) + 2D canvas fallback
@@ -40,18 +41,34 @@ js/venue.js  "Find Your Way to NEBULA" renderer: reads VENUE (js/data.js) and sw
 
 ## The NEBULA GALAXY ARCHIVE (Phase 3)
 
-- An **interactive star map** (`#galaxy`) replaces the old grid of committee cards:
-  - 8 planetary destinations, each with its own visual identity (Earth-blue, violet/rose,
-    gold-lit, neon digital, ancient celestial, enchanted, stadium, silver observatory).
-  - Constellation lines (SVG), a central NEBULA beacon core, and orbit rings.
-  - Select any world → its **MISSION DOSSIER** opens on the right (desktop) or a
-    bottom sheet (mobile < 900px).
-- The dossier shows: full committee name, type, description, fee, agenda status
-  ("To Be Announced Shortly"), and a **searchable portfolio explorer** that reuses
-  `getPortfolioNames` / `getPortfolioGroups` from `js/data.js` — no duplicated data.
-- **"Register for this committee"** hands off to the existing wizard:
-  `window.nebulaReg.openRegister(id)` preselects the chosen committee as
-  **Preference 1** in the 5-step registration form.
+An interactive star map of the eight committee destinations, built from a single
+source of truth in `js/data.js`.
+
+- **The map** (`#galaxy`): 8 planetary nodes on a fixed layout (`POS` in `js/galaxy.js`),
+  each with its own visual identity (Earth-blue, violet/rose, gold-lit, neon digital,
+  ancient celestial, enchanted, stadium, silver observatory). Constellation lines
+  (inline SVG, `LINKS`), a central NEBULA beacon core, and orbit rings.
+  - Selecting a node pulses its constellation lines and triggers the dossier
+    activation sequence.
+  - Below 900px the map is single-column and the dossier is hidden; selecting a
+    world opens a bottom sheet (`#sheet`) instead.
+- **The mission dossier** (desktop panel, `#dossier`): full committee name, type,
+  description, fee, agenda status, and a searchable portfolio explorer.
+  - Per-committee theme (colors + SVG motif) is configured in `THEMES` and
+    `DOS_INTRO` in `js/galaxy.js`; the activation motion lives in
+    `css/dossier-activation.css` and is keyed off `--th-a` / `--th-b` / `--th-glow`
+    CSS variables set at selection time.
+  - The activation runs Phases A–D: selection response → brief initialization
+    (status line + sweep) → committee reveal (motif + headline) → staggered
+    dossier data. It is ~1.4s, never blocks reading, and is disabled (static,
+    complete states) under `prefers-reduced-motion`.
+  - Portfolio data is **never duplicated**: the matrix reuses `getPortfolioNames`
+    and `getPortfolioGroups` from `js/data.js`. Crisis committees render grouped
+    faction roles; conventional committees render flat portfolio lists.
+- **Register handoff**: "Register for this committee" calls
+  `window.nebulaReg.openRegister(id)`, which preselects the chosen committee as
+  **Preference 1** in the 5-step wizard. The world you view is preselected as your
+  first choice.
 - Motion: gentle core breathing, orbit rings, and a restrained pointer parallax;
   all of it respects `prefers-reduced-motion`.
 
@@ -134,6 +151,30 @@ paths clean up their animation loops and event listeners on `beforeunload`.
   the site shows per-committee fees but does not collect money.
 - Optional polish candidates: 3D/VR mode, live venue photos, sponsor logos,
   and a real payment flow once the backend exists.
+
+## Registration
+
+`js/register.js` runs the 5-step delegation registration wizard inside a modal
+(`#register-modal`, opened by every `data-open-register` button on the page —
+nav, hero, CTA, footer, and the dossier/sheet register buttons).
+
+- **Steps**: (1) Details — name, email, phone/WhatsApp, institution;
+  (2) Committees — three ranked preferences with duplicate-prevention selects
+  and per-choice fee chips; (3) Portfolios — up to three ranked picks from the
+  first-choice committee's matrix, plus a free-text fallback; (4) Experience —
+  MUNs attended and awards; (5) Review — full summary plus a fee box.
+- **Validation**: each step is validated on `Continue`; the first invalid field is
+  focused. Submit re-validates all steps before showing the confirmation state.
+- **Draft**: every field is persisted to `localStorage` under `nebula-reg-draft`
+  on input/change and restored when the modal reopens, so a half-finished
+  registration survives a reload.
+- **Handoff from the galaxy**: `window.nebulaReg.openRegister(id)` preselects the
+  given committee as **Preference 1**. The dossier and mobile sheet register
+  buttons call the same function with the currently selected committee.
+- **Honest scope**: this is a demo / local-only submission. Nothing is sent to the
+  organisers until a backend is connected (database, payment-proof upload and
+  admin dashboard). No payment QR, UPI ID or transaction data is collected or
+  fabricated.
 
 ## Verification notes
 
