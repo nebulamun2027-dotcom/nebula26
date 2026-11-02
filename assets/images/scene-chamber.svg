@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0e0a14;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#030306;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="dark3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a080c;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#020204;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg3)"/>
+  <g fill="#0d0a0d">
+    <rect x="50" y="400" width="120" height="280"/>
+    <rect x="190" y="350" width="140" height="330"/>
+    <rect x="320" y="420" width="110" height="260"/>
+    <rect x="430] y=\\\"380] width=\\\"100] height=\\\"300" fill="#0d0a0d"/>
+    <rect x="550] y=\\\"400] width=\\\"90] height=\\\"280\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"660] y=\\\"360] width=\\\"110] height=\\\"320\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"790] y=\\\"440] width=\\\"80] height=\\\"240\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"890] y=\\\"370] width=\\\"100] height=\\\"310\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1000] y=\\\"410] width=\\\"90] height=\\\"270\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1120] y=\\\"390] width=\\\"90] height=\\\"290\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1230] y=\\\"430] width=\\\"70] height=\\\"250\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1320] y=\\\"360] width=\\\"100] height=\\\"300\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1440] y=\\\"450] width=\\\"70] height=\\\"240\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1530] y=\\\"390] width=\\\"90] height=\\\"280\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1650] y=\\\"380] width=\\\"100] height=\\\"280\\\" fill=\\\"#0d0a0d\\\"/>\\n    <rect x=\\\"1750] y=\\\"420] width=\\\"80] height=\\\"260\\\" fill=\\\"#0d0a0d\\\"/>\\n  </g>\\n  <rect y=\\\"700\\\" width=\\\"1920\\\" height=\\\"380\\\" fill=\\\"#040406\\\"/>\\n  <rect y=\\\"700\\\" width=\\\"1920\\\" height=\\\"30\\\" fill=\\\"#0c0c0c\\\"/>\\n  <line x1=\\\"0\\\" y1=\\\"700\\\" x2=\\\"1920\\\" y2=\\\"700\\\" stroke=\\\"#161416\\\" stroke-width=\\\"2\\\"/>\\n  <line x1=\\\"0\\\" y1=\\\"940\\\" x2=\\\"1920\\\" y2=\\\"940\\\" stroke=\\\"#161416\\\" stroke-width=\\\"1\\\" opacity=\\\"0.5\\\"/><g fill=\\\"#0d0a0d\\\"><rect x=\\\"80\\\" y=\\\"580\\\" width=\\\"80\\\" height=\\\"60\\\"/><rect x=\\\"80\\\" y=\\\"590\\\" width=\\\"80\\\" height=\\\"10\\\"/><circle cx=\\\"90\\\" cy=\\\"595\\\" r=\\\"6\\\" fill=\\\"#e8a0a0\\\" opacity=\\\"0.8\\\"/><rect x=\\\"300\\\" y=\\\"600\\\" width=\\\"60\\\" height=\\\"80\\\"/><rect x=\\\"300\\\" y=\\\"600\\\" width=\\\"60\\\" height=\\\"10\\\"/><rect x=\\\"500\\\" y=\\\"650\\\" width=\\\"100\\\" height=\\\"40\\\"/><rect x=\\\"720\\\" y=\\\"620\\\" width=\\\"80\\\" height=\\\"40\\\"/><rect x=\\\"940\\\" y=\\\"660\\\" width=\\\"60\\\" height=\\\"50\\\"/><rect x=\\\"1180\\\" y=\\\"660\\\" width=\\\"100\\\" height=\\\"60\\\"/><rect x=\\\"1380\\\" y=\\\"650\\\" width=\\\"80\\\" height=\\\"50\\\"/><rect x=\\\"1600\\\" y=\\\"670\\\" width=\\\"80\\\" height=\\\"40\\\"/></g>\\n</svg>

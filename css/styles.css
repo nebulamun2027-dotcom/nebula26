@@ -2421,3 +2421,180 @@ body.gw-arriving [data-reveal].is-visible {
     animation: none;
   }
 }
+
+/* ==========================================================================
+   NEBULA PAYMENT — Payment & Verification styling
+   ========================================================================== */
+
+/* Payment panel */
+.payment-panel {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--gutter);
+}
+
+.payment-header {
+  text-align: center;
+  margin-bottom: var(--space-5);
+}
+
+.payment-badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 1rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid rgba(240, 195, 110, 0.3);
+  border-radius: 999px;
+  background: rgba(240, 195, 110, 0.08);
+}
+
+.payment-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.payment-subtitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+}
+
+.payment-qr-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(8, 4, 6, 0.6);
+  border: 1px solid rgba(240, 195, 110, 0.2);
+  border-radius: var(--radius);
+}
+
+.qr-container {
+  position: relative;
+}
+
+.qr-image {
+  width: 260px;
+  height: 260px;
+  border-radius: 16px;
+  background: #0a0a10;
+  border: 2px solid rgba(240, 195, 110, 0.3);
+  box-shadow: 0 0 30px rgba(240, 195, 110, 0.2);
+}
+
+.qr-label {
+  margin-top: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  text-align: center;
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fee-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(8, 4, 6, 0.5);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(240, 195, 110, 0.2);
+}
+
+.fee-label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fee-amount {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+.payment-info-text {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.payment-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reg__file-upload {
+  position: relative;
+}
+
+.reg__file-preview {
+  margin-top: 0.75rem;
+}
+
+.reg__file-hint {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.reg__checkbox-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.reg__checkbox-label input {
+  margin-top: 0.2rem;
+}
+
+.reg__confirm {
+  text-align: center;
+  padding: 2rem var(--gutter);
+}
+
+.reg__confirm-hint {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+@media (max-width: 760px) {
+  .payment-qr-section {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .payment-panel {
+    padding: var(--space-4) var(--gutter);
+  }
+}

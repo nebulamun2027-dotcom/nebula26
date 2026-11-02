@@ -56,14 +56,14 @@
   };
 
   const THEMES = {
-    "unhrc": { a: "#5c9dff", b: "#2b6fb8", g: "92, 157, 255" },
-    "uncsw": { a: "#b78fff", b: "#e07aa0", g: "183, 144, 255" },
-    "lok-sabha": { a: "#f0c36e", b: "#a8803a", g: "240, 195, 110" },
-    "influencer": { a: "#ff5fd2", b: "#5c9dff", g: "255, 95, 210" },
-    "mythology": { a: "#e8b34b", b: "#4b3f9e", g: "232, 179, 75" },
-    "harry-potter": { a: "#a98fff", b: "#3fd0c9", g: "169, 143, 255" },
-    "ipl": { a: "#ff8a5c", b: "#ffe14d", g: "255, 138, 92" },
-    "international-press": { a: "#9fc4e8", b: "#7d8fd0", g: "159, 196, 232" }
+    "unhrc": { a: "#5c9dff", b: "#2b6fb8", g: "92, 157, 255", ring: { rot: -22, op: 0.86, h: 0.32, count: 1 } },
+    "uncsw": { a: "#b78fff", b: "#e07aa0", g: "183, 144, 255", ring: { rot: 14, op: 0.82, h: 0.30, count: 2 } },
+    "lok-sabha": { a: "#f0c36e", b: "#a8803a", g: "240, 195, 110", ring: { rot: -8, op: 0.95, h: 0.26, count: 1 } },
+    "influencer": { a: "#ff5fd2", b: "#5c9dff", g: "255, 95, 210", ring: { rot: 38, op: 0.9, h: 0.34, count: 1 } },
+    "mythology": { a: "#e8b34b", b: "#4b3f9e", g: "232, 179, 75", ring: { rot: -30, op: 0.82, h: 0.30, count: 2 } },
+    "harry-potter": { a: "#a98fff", b: "#3fd0c9", g: "169, 143, 255", ring: { rot: 18, op: 0.78, h: 0.28, count: 1 } },
+    "ipl": { a: "#ff8a5c", b: "#ffe14d", g: "255, 138, 92", ring: { rot: -12, op: 0.9, h: 0.32, count: 1 } },
+    "international-press": { a: "#9fc4e8", b: "#7d8fd0", g: "159, 196, 232", ring: { rot: 6, op: 0.74, h: 0.24, count: 1 } }
   };
 
   /* ---------- 2. Node placement + constellation links ---------- */
@@ -128,9 +128,10 @@
     for (const c of COMMITTEES) {
       const t = THEMES[c.id] || { a: "#8f7bff", b: "#5c9dff", g: "143, 123, 255" };
       const p = POS[c.id] || [50, 50];
+      const ring = t.ring || { rot: -18, op: 0.8, h: 0.3, count: 1 };
       nodes +=
         '<button type="button" class="galaxy__node" role="tab" aria-selected="false" data-committee="' + c.id + '"' +
-        ' style="left:' + p[0] + '%;top:' + p[1] + '%;--node-a:' + t.a + ';--node-b:' + t.b + ';--node-glow:' + t.g + '">' +
+        ' style="left:' + p[0] + '%;top:' + p[1] + '%;--node-a:' + t.a + ';--node-b:' + t.b + ';--node-glow:' + t.g + ';--node-ring-rot:' + ring.rot + 'deg;--node-ring-op:' + ring.op + ';--node-ring-h:' + ring.h + ';--node-ring-count:' + ring.count + '">' +
         '<span class="galaxy__node-planet" aria-hidden="true"></span>' +
         '<span class="galaxy__node-ring" aria-hidden="true"></span>' +
         '<span class="galaxy__node-label">' + c.short + '</span>' +
@@ -140,9 +141,35 @@
     $$(".galaxy__node", field).forEach((btn) => {
       btn.addEventListener("click", () => selectCommittee(btn.dataset.committee));
       btn.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); selectCommittee(btn.dataset.committee); }
+        if (ev.key === "Enter" || ev.key === " " || ev.key === "ArrowDown" || ev.key === "ArrowUp" || ev.key === "ArrowRight" || ev.key === "ArrowLeft") {
+          ev.preventDefault();
+          if (ev.key === "Enter" || ev.key === " ") selectCommittee(btn.dataset.committee);
+          else cycleNode(btn, ev.key);
+        }
       });
+      // Hover/focus response: lift the world, brighten its atmosphere and
+      // make its identity immediately recognizable — without selecting it.
+      const onHover = (on) => btn.classList.toggle("is-hovered", on);
+      btn.addEventListener("pointerenter", () => onHover(true));
+      btn.addEventListener("pointerleave", () => onHover(false));
+      btn.addEventListener("focus", () => onHover(true));
+      btn.addEventListener("blur", () => onHover(false));
     });
+  }
+
+  /* Keyboard: move the focus between the eight worlds along the constellation
+     graph (existing LINKS) so keyboard users can traverse the galaxy. */
+  function cycleNode(from, key) {
+    const adj = {};
+    for (const [a, b] of LINKS) { (adj[a] = adj[a] || []).push(b); (adj[b] = adj[b] || []).push(a); }
+    const cur = from.dataset.committee;
+    const opts = adj[cur] || COMMITTEES.map((c) => c.id);
+    const idx = opts.indexOf(cur);
+    let next;
+    if (key === "ArrowRight" || key === "ArrowDown") next = opts[(idx + 1 + opts.length) % opts.length];
+    else next = opts[(idx - 1 + opts.length) % opts.length];
+    const target = $$(".galaxy__node", field).find((b) => b.dataset.committee === next);
+    if (target) target.focus();
   }
 
   function selectCommittee(id) {
@@ -159,12 +186,48 @@
     });
     if (repeat) {
       renderDossier(c);
+      // If the same world is already open, gently re-focus its node instead
+      // of replaying the whole startup sequence.
+      const worlds = window.NEBULA_WORLDS;
+      if (worlds && worlds.isOpen && worlds.isOpen()) zoomSelected(id);
       return;
     }
     pulseLinks(id);
-    activateDossier(c);
-    if (window.innerWidth < 900) openSheet(c);
+    // Cinematic selection: the chosen world swells to dominance while the
+    // rest of the field recedes, then the full-screen world takes over.
+    zoomSelected(id);
+    const worlds = window.NEBULA_WORLDS;
+    if (worlds && worlds.enter) {
+      worlds.enter(c, function () {
+        activateDossier(c);
+        if (window.innerWidth < 900) openSheet(c);
+      });
+    } else {
+      activateDossier(c);
+      if (window.innerWidth < 900) openSheet(c);
+    }
   }
+
+  /* Cinematic selection response: the chosen world swells and its atmosphere
+     brightens while the rest of the field recedes into the deep. The effect
+     is CSS-driven (instant on reduced motion) and never blocks the dossier
+     activation that follows. */
+  function zoomSelected() {
+    const root = $("#galaxy");
+    if (!root) return;
+    root.classList.remove("is-zooming");
+    void root.offsetWidth;
+    root.classList.add("is-zooming");
+    if (reducedMotion.matches) {
+      root.classList.remove("is-zooming");
+      return;
+    }
+    window.clearTimeout(zoomSelected.timer);
+    zoomSelected.timer = window.setTimeout(() => {
+      root.classList.remove("is-zooming");
+    }, 950);
+  }
+  zoomSelected.timer = 0;
 
   /* ---------- 2b. Cinematic activation sequence (Phases A–D) ----------
      The right-hand panel runs: selection response → brief initialization →
@@ -531,17 +594,22 @@
         : getPortfolioNames(c).length + " portfolios — search above to filter";
     }
     sSearch.addEventListener("input", () => { sheetQ = sSearch.value; renderSheetMatrix(); });
-    sRegister.addEventListener("click", () => { closeSheet(); window.nebulaReg && window.nebulaReg.openRegister(c.id); });
+    sRegister.addEventListener("click", () => { closeSheet(true); window.nebulaReg && window.nebulaReg.openRegister(c.id); });
     renderSheetMatrix();
     sheet.root.hidden = false;
     sheet.root.setAttribute("aria-hidden", "false");
     sSearch.focus();
   }
 
-  function closeSheet() {
+  function closeSheet(keepWorld) {
     if (!sheet.root || sheet.root.hidden) return;
     sheet.root.hidden = true;
     sheet.root.setAttribute("aria-hidden", "true");
+    // On mobile the sheet IS the dossier; closing it returns delegates to
+    // the Galaxy Archive instead of leaving them on a bare world backdrop.
+    if (!keepWorld && window.innerWidth < 900 && window.NEBULA_WORLDS && window.NEBULA_WORLDS.isOpen && window.NEBULA_WORLDS.isOpen()) {
+      window.NEBULA_WORLDS.exit(false);
+    }
   }
 
   /* ---------- 6. Wiring: search, register buttons, parallax, reduced motion ---------- */
@@ -566,10 +634,44 @@
         window.nebulaReg && window.nebulaReg.openRegister(state.selected);
       });
     }
-    $$("[data-sheet-close]").forEach((el) => el.addEventListener("click", closeSheet));
+    $$("[data-sheet-close]").forEach((el) => el.addEventListener("click", () => closeSheet()));
     document.addEventListener("keydown", (ev) => {
       if (ev.key === "Escape" && !sheet.root.hidden) closeSheet();
     });
+
+    // Returning from a committee world: reset the node selection so the
+    // same destination can be entered again with its full startup.
+    window.addEventListener("nebula:world-closed", () => {
+      state.selected = null;
+      state.q = "";
+      if (dossier.search) dossier.search.value = "";
+      $$(".galaxy__node", field).forEach((btn) => {
+        btn.classList.remove("is-selected");
+        btn.setAttribute("aria-selected", "false");
+      });
+      closeSheet(true);
+    });
+
+    // Keep the dossier reachable across a live breakpoint change while a world
+    // is open: the desktop dossier lives inside the world, the mobile sheet is
+    // owned here. Without this, resizing desktop → mobile strands the delegate
+    // on the world backdrop with no dossier visible.
+    const narrowViewport = window.matchMedia("(max-width: 899px)");
+    function syncWorldDossier() {
+      const worlds = window.NEBULA_WORLDS;
+      if (!worlds || !worlds.isOpen || !worlds.isOpen() || !state.selected) return;
+      const c = COMMITTEES.find((x) => x.id === state.selected);
+      if (!c) return;
+      if (narrowViewport.matches) {
+        const world = document.getElementById("committee-world");
+        const revealed = world && world.classList.contains("is-revealed");
+        if (revealed && sheet.root && sheet.root.hidden) openSheet(c);
+      } else if (sheet.root && !sheet.root.hidden) {
+        closeSheet(true);
+      }
+    }
+    if (narrowViewport.addEventListener) narrowViewport.addEventListener("change", syncWorldDossier);
+    else if (narrowViewport.addListener) narrowViewport.addListener(syncWorldDossier);
 
     // restrained pointer parallax on the stage (desktop, fine pointers, motion allowed)
     const stage = $(".galaxy-stage");

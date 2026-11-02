@@ -1,6 +1,6 @@
 # NEBULA MUN 2026 — Website
 
-A static multi-page (single-file) website for NEBULA MUN 2026, built in four phases:
+A static multi-page (single-file) website for NEBULA MUN 2026, built in five phases:
 
 | Phase | What it covers |
 |---|---|
@@ -8,6 +8,7 @@ A static multi-page (single-file) website for NEBULA MUN 2026, built in four pha
 | 2 | Registration: 5-step wizard modal, local draft in `localStorage` |
 | 3 | **The NEBULA GALAXY ARCHIVE**: interactive star map of the eight committee destinations, MISSION DOSSIER panel, searchable portfolio explorer, register handoff that preselects the chosen committee |
 | 4 | **The NEBULA GATEWAY**: full-viewport cinematic entrance (stages A–D), skip + replay, session-based one-time playback, reduced-motion path, and the continuously living cosmic background |
+| 5 | **THE LIVING COSMOS + EIGHT COMMITTEE WORLDS**: real-time Three.js homepage universe and a distinct cinematic startup world for every committee, with in-world dossiers, responsive handoff, reduced-motion and WebGL-fallback paths |
 
 ## Run it
 
@@ -28,15 +29,19 @@ Then browse to `http://localhost:8080`.
 index.html        single-page site: nav, hero, committees-as-galaxy, modals, footer
 css/styles.css     design system: tokens, star field, nebula, modals, galaxy archive
 css/dossier-activation.css  cinematic per-committee activation motifs + Phase A–D motion for the mission dossier
+css/cosmos.css     Phase 5 homepage cosmos polish, world overlay/HUD/startup, in-world dossier, responsive + reduced-motion rules
 js/data.js         single source of truth: COMMITTEES + portfolio/group data + helpers
-js/main.js         star-field canvas (parallax, pulsing galactic light, occasional shooting stars), countdown, reveal-on-scroll, tilt
-js/nebula.js       cinematic space environment: WebGL volumetric nebula shader + 2D canvas fallback
-js/galaxy.js       galaxy map, mission dossier (desktop), mobile bottom sheet, register handoff
+js/main.js         legacy star-field canvas (parallax, shooting stars), countdown, reveal-on-scroll, tilt — suspended once the 3D cosmos is ready, used as a background fallback
+js/nebula.js       Phase 5 living cosmos: the shared Three.js homepage universe (planet, star, orbiters, ringed world, nebula shaders, asteroids, spacecraft, shooting stars) + 2D fallback
+js/committee-themes.js  art direction, palette, camera and startup copy for the eight committee worlds (keyed by official data.js IDs)
+js/committee-worlds.js  shared full-screen Three.js world engine: startup sequence, cinematic dossier reveal, responsive placement, disposal and CSS fallback
+js/galaxy.js       galaxy map, mission dossier (desktop), mobile bottom sheet, register handoff, world enter/exit integration
 js/register.js     5-step registration wizard (client-side only)
 js/gateway.js       Phase 4 gateway renderer: canvas rings, inward particles, energy pulses, filaments, parallax
 js/gateway-sequence.js  Phase 4 sequence controller: stages A (signal) → B (activation) → C (access panel) → D (exit/warp)
 js/about-chamber.js  About-section celestial diplomacy chamber: WebGL 3D scene (central planet, rings, three orbiting planets, particles) + 2D canvas fallback
 js/venue.js  "Find Your Way to NEBULA" renderer: reads VENUE (js/data.js) and swaps the pending panel for the interactive map, address line and Get Directions link
+vendor/three.min.js  vendored Three.js r160 (UMD) so the cosmos loads without a network dependency
 ```
 
 ## The NEBULA GALAXY ARCHIVE (Phase 3)
@@ -95,27 +100,84 @@ Phase 1–3 behaviour are preserved untouched behind it.
   Enter on ENTER THE UNIVERSE completes entry (verified).
 - **Fail-safe**: if the sequence throws, the veil lifts and the homepage is
   revealed.
-- **Living background**: after entry, the cosmic background keeps living on the
-  homepage — WebGL nebula (`js/nebula.js`) plus the enhanced star-field canvas in
-  `js/main.js` (pointer parallax, pulsing galactic light, occasional shooting
-  stars). WebGL is primary; a 2D fallback renders when WebGL is unavailable
-  (verified: `#nebula-gl` hidden, `#nebula-2d` visible, starfield active).
+- **Living background**: after entry, the 3D cosmos keeps living on the
+  homepage through `js/nebula.js` (WebGL planet, star, orbiters, ringed world,
+  shaders, asteroids, spacecraft). The legacy 2D star-field canvas in
+  `js/main.js` is suspended and hidden once `nebula:cosmos-ready` fires, and is
+  used only when the 3D path cannot start. WebGL is primary; a 2D canvas
+  fallback renders when Three.js/WebGL is unavailable (verified: `#nebula-gl`
+  hidden, `#nebula-2d` visible, starfield inactive).
 
-## Cinematic space environment
+## The living cosmos (Phase 5)
 
-`js/nebula.js` replaces the flat CSS glow layers with a real environment:
+`js/nebula.js` is a single shared real-time Three.js universe rendered on
+`#nebula-gl`; Three.js r160 is vendored in `vendor/three.min.js` so there is no
+runtime CDN dependency.
 
-- **WebGL path** (primary): a fragment-shader nebula rendered on a full-screen
-  quad. It layers a deep-space base, volumetric FBM gas clouds (violet / indigo /
-  blue / restrained magenta), luminous dust filaments, a small distant spiral
-  galaxy, thresholded star clusters, soft light rays, a gentle camera drift
-  (`uTime * 0.008`), pointer parallax, and 4×4 dithering against gradient
-  banding. DPR is capped at 1.75 to control fill-rate cost.
-- **2D fallback** (graceful degradation): if WebGL is unavailable, a dedicated
-  `#nebula-2d` canvas draws blurred radial-gradient nebula blobs + star specks.
-- A `.hero::after` readability scrim keeps the centered NEBULA typography legible
-  over the richer background.
-- All motion honors `prefers-reduced-motion` (single static frame, 0 active animations).
+- **3D star field** in three depth layers with pointer parallax and subtle drift.
+- **A huge procedural terrestrial planet** in the hero: continents, oceans,
+  cloud bands, polar ice, night-side city lights and an atmospheric rim.
+- **A central star with orbiting worlds** and tilted orbit rings, plus a **giant
+  ringed gas planet** partially visible in the foreground.
+- **Shader nebula clouds**, shooting stars with luminous trails, instanced
+  asteroids and a distant spacecraft.
+- **Cinematic opening**: stars illuminate → core ignites → worlds emerge. The
+  sequence is coordinated with the existing gateway and begins only after
+  `nebula:gateway-complete`, so the intro is not played behind the veil.
+- **Camera + pointer**: a slow cinematic drift and restrained mouse parallax on
+  fine pointers; no interaction can block the page.
+- **Performance**: one WebGL context, capped device pixel ratio, render loop
+  paused when the tab is hidden or a committee world is open, and full cleanup
+  on unload.
+- **Reduced motion** renders a single high-quality frame (no animation loop).
+- **Fallback**: if Three.js or WebGL is unavailable, the previous 2D procedural
+  sky (`#nebula-2d`) takes over and the cosmos still signals `nebula:cosmos-ready`.
+
+## The eight committee worlds (Phase 5)
+
+Selecting a destination in the Galaxy Archive now opens a full-screen,
+theme-specific world:
+
+| Committee | World builder | Startup title |
+|---|---|---|
+| UNHRC | Orbital council chamber | THE HUMAN RIGHTS CHAMBER |
+| UNCSW | Celestial commission | THE LUMINOUS COMMISSION |
+| Lok Sabha | Parliamentary hall | THE HOUSE IS IN SESSION |
+| Influencer Summit | Neon digital stage | INFLUENCE IS A UNIVERSE |
+| Mythology Crisis | Celestial court | THE CELESTIAL COURT |
+| Wizarding Crisis | Enchanted castle | THE ENCHANTED CASTLE |
+| IPL Auction | Orbital stadium / auction floor | THE ORBITAL STADIUM |
+| International Press | Observatory newsroom | THE WORLD IS WATCHING |
+
+- **One shared engine** (`js/committee-worlds.js`) powers every world: a single
+  canvas/overlay, one WebGL context, a scene rebuilt per entry and fully
+  disposed on exit (geometries, materials, textures, render targets).
+- **Selection choreography**: the chosen node glows, the map camera moves in,
+  the other worlds recede, and the selected world takes over the viewport.
+- **Theme separation**: palettes, lighting, camera rigs and startup copy live in
+  `js/committee-themes.js`, keyed by the official committee IDs. Names, agendas,
+  fees, descriptions and portfolios always come from `js/data.js`; nothing is
+  duplicated or renamed.
+- **Startup → dossier**: a ~2.45s theme startup plays, then the existing mission
+  dossier moves into the world as a cinematic card with agenda, fee and the full
+  searchable portfolio matrix. The dossier DOM is reused, not cloned; on exit it
+  returns to its original place in the galaxy layout.
+- **Registration unchanged**: the in-world register button calls the same
+  `window.nebulaReg.openRegister(id)` handoff and preselects the committee as
+  Preference 1. The world remains behind the registration modal.
+- **Exit**: the world close button, `Escape`, or closing the mobile sheet returns
+  to the Galaxy Archive, clears the node selection and re-enables the homepage
+  cosmos.
+- **Responsive**: below 900px the world uses the existing bottom sheet as its
+  dossier. Crossing the breakpoint while a world is open moves the dossier
+  between the world slot and the sheet without losing the selection, and closing
+  the sheet exits the world.
+- **Reduced motion**: a single static frame replaces the world animation; the
+  startup and dossier reveal use short, calm timings.
+- **Fallback**: if Three.js/WebGL fails, the overlay keeps a CSS-only themed
+  backdrop, HUD and startup, then reveals the same dossier with no 3D scene.
+- **Debug surfaces** (non-production): `window.NEBULA_COSMOS_DEBUG` and
+  `window.NEBULA_WORLDS.debug()` expose state for verification.
 
 ## The Celestial Diplomacy Chamber (About section)
 
@@ -149,8 +211,9 @@ paths clean up their animation loops and event listeners on `beforeunload`.
 - **Agenda**: listed as "To Be Announced Shortly" until the organisers publish it.
 - **Payment amount**: final payable amount is "To Be Confirmed by Organisers";
   the site shows per-committee fees but does not collect money.
-- Optional polish candidates: 3D/VR mode, live venue photos, sponsor logos,
-  and a real payment flow once the backend exists.
+- Optional polish candidates: an optional VR walkthrough of the committee
+  worlds, live venue photos, sponsor logos, and a real payment flow once the
+  backend exists.
 
 ## Registration
 
@@ -202,6 +265,33 @@ nav, hero, CTA, footer, and the dossier/sheet register buttons).
     animation, letterboxes static; gateway removed after entry.
   - All JS files pass `node --check`; `css/styles.css` braces balanced (472 open
     / 472 close) after the Phase 4 block repair.
+- **Phase 5 living cosmos + committee worlds (verified in-browser, Chrome
+  headless with SwiftShader)**:
+  - Homepage: 3D cosmos active (`body.cosmos-3d`); `NEBULA_COSMOS_DEBUG.counts()`
+    reported 28 meshes / 1 point cloud / 6 line groups; 8 themes loaded and all
+    8 `COMMITTEES` records resolved.
+  - All eight worlds opened from real node clicks: no fallback, 15–40 meshes and
+    ~3.5k–35k triangles per world, matching startup titles, matching dossier
+    committee/fee/agenda, and portfolio chip counts taken from `data.js`
+    (35 for most committees, 10 for IPL, 3 for International Press).
+  - Dossier moves into the world on desktop (35 chips) and returns to the
+    galaxy after Exit, `Escape`, or sheet close; `body` returns to `cosmos-3d`
+    and 0 nodes remain selected.
+  - Registration handoff from International Press opened the wizard with
+    `reg-pref1 = international-press`; closing the modal kept the world and its
+    in-world dossier intact.
+  - Repeat-selecting the same open world does not rebuild or duplicate it; the
+    homepage render loop paused while a world was open (`raf` null,
+    `isPaused()` true) and resumed on exit.
+  - Live resize 1440×900 → 390×844 while a world is open opens the mobile sheet
+    with the same committee and chips; resizing back closes the sheet and
+    remounts the desktop dossier inside the world.
+  - Reduced motion: `prefers-reduced-motion` matched, the cosmos used no
+    animation frame, and the world rendered a static frame with the correct
+    dossier.
+  - Forced no-Three fallback: `#nebula-2d` visible, legacy starfield hidden, the
+    CSS world opened and revealed the dossier; zero console/runtime errors.
+  - All 11 JS files pass `node --check`.
 - Header: verified at 1440/1280/1024 — exactly one Register button in the nav,
   none in the announcement strip, no link/button overlap; mobile dropdown
   verified at 390px.

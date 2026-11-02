@@ -87,6 +87,9 @@
       document.documentElement.style.overflow = "";
       body.classList.remove("gw-active");
       if (root.parentNode) root.parentNode.removeChild(root);
+      try {
+        window.dispatchEvent(new CustomEvent("nebula:gateway-complete"));
+      } catch (e) { /* ignore */ }
       if (instant !== true) {
         body.classList.add("gw-arriving");
         if (arriveTimer) clearTimeout(arriveTimer);

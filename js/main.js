@@ -8,6 +8,7 @@
   "use strict";
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const finePointer = window.matchMedia("(pointer: fine)");
 
   /* ---------- 1. Star field (canvas) ---------- */
   const canvas = document.getElementById("starfield");
@@ -172,6 +173,11 @@
       }, 150);
     });
     reducedMotion.addEventListener("change", applyMotionMode);
+    // If the new 3D cosmos is active, hide/disable the legacy 2D starfield
+    window.addEventListener("nebula:cosmos-ready", function () {
+      stopLoop();
+      if (canvas) canvas.style.display = "none";
+    }, { once: true });
   }
 
   /* ---------- 2. Live countdown to 26 December 2026 (IST midnight) ---------- */
@@ -197,8 +203,9 @@
   tick();
   setInterval(tick, 1000);
 
-  /* ---------- 3. Reveal on scroll ---------- */
+  /* ---------- 3. Reveal on scroll (cinematic, staggered, parallax) ---------- */
   const revealEls = document.querySelectorAll("[data-reveal]");
+  const ioOptions = { threshold: 0.12, rootMargin: "0px 0px -8% 0px" };
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       (entries) => {
@@ -211,14 +218,42 @@
           io.unobserve(el);
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+      ioOptions
     );
+    /* staggered groups: children reveal one after another */
+    document.querySelectorAll("[data-reveal-stagger]").forEach((group) => {
+      const children = Array.from(
+        group.querySelectorAll("[data-reveal]")
+      );
+      children.forEach((child, i) => {
+        child.style.setProperty("--reveal-delay", (i * 120) + "ms");
+      });
+      io.observe(group);
+    });
     revealEls.forEach((el) => {
       if (reducedMotion.matches) el.classList.add("is-visible");
       else io.observe(el);
     });
   } else {
     revealEls.forEach((el) => el.classList.add("is-visible"));
+  }
+
+  /* subtle parallax on reveal elements that carry data-reveal-parallax */
+  if (!reducedMotion.matches && finePointer.matches) {
+    const parallaxEls = document.querySelectorAll("[data-reveal-parallax]");
+    const pState = { y: 0, ty: 0 };
+    window.addEventListener("scroll", () => {
+      pState.ty = window.scrollY;
+    }, { passive: true });
+    (function pLoop() {
+      pState.y += (pState.ty - pState.y) * 0.06;
+      parallaxEls.forEach((el) => {
+        const strength = parseFloat(el.dataset.revealParallax || "0.06");
+        const offset = pState.y * strength;
+        el.style.transform = "translateY(" + offset.toFixed(2) + "px)";
+      });
+      window.requestAnimationFrame(pLoop);
+    })();
   }
 
   /* ---------- 4. Mobile navigation menu ---------- */
@@ -267,7 +302,6 @@
   }
 
   /* ---------- 6. Subtle 3D tilt on committee cards (fine pointers only) ---------- */
-  const finePointer = window.matchMedia("(pointer: fine)");
   function initTilt() {
     if (reducedMotion.matches || !finePointer.matches) return;
     document.querySelectorAll("[data-tilt]").forEach((card) => {

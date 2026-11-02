@@ -1,0 +1,20 @@
+{
+  "name": "nebulamun-ai-backend",
+  "version": "1.0.0",
+  "description": "Secure backend API for NEBULA MUN 2026 AI assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^2.5.0",
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

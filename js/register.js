@@ -233,6 +233,32 @@
         setErr("reg-muns", "");
       }
     }
+    if (step === 6) {
+      const upi = $("#reg-upi-id").value.trim();
+      const proof = $("#reg-payment-proof").value;
+      const agree = $("#reg-payment-confirm").checked;
+      if (!upi) {
+        setErr("reg-upi-id", "Enter UPI Transaction ID / UTR Number");
+        ok = false;
+        firstBad = firstBad || "reg-upi-id";
+      } else {
+        setErr("reg-upi-id", "");
+      }
+      if (!proof) {
+        setErr("reg-payment-proof", "Please upload payment screenshot");
+        ok = false;
+        firstBad = firstBad || "reg-payment-proof";
+      } else {
+        setErr("reg-payment-proof", "");
+      }
+      if (!agree) {
+        setErr("reg-payment-confirm", "Please confirm the payment checkbox");
+        ok = false;
+        firstBad = firstBad || "reg-payment-confirm";
+      } else {
+        setErr("reg-payment-confirm", "");
+      }
+    }
     if (firstBad) $("#" + firstBad).focus();
     return ok;
   }
@@ -252,13 +278,10 @@
     const submit = $("#reg-submit");
     prev.disabled = n === 1;
     if (n === 5) {
-      next.hidden = true;
-      submit.hidden = false;
-      renderReview();
-    } else {
       next.hidden = false;
-      submit.hidden = true;
-    }
+      submit.hidden = false;
+      submit.textContent = "CONTINUE TO PAYMENT";
+      renderReview();
     const pane = $('.reg__pane[data-pane="' + n + '"]');
     if (pane) pane.focus && pane.setAttribute("tabindex", "-1") && pane.focus();
   }
@@ -328,6 +351,20 @@
     if (PAYABLE_FEE === "sum") return fmt(fees.reduce((a, b) => a + b, 0));
     if (PAYABLE_FEE === "max") return fmt(Math.max(0, ...fees));
     return fmt(PAYABLE_FEE); // fixed amount set by organisers
+  }
+
+  function calculateAndDisplayFee() {
+    const pref1 = document.getElementById("reg-pref1").value;
+    const c = COMMITTEES.find((x) => x.id === pref1);
+    const feeAmount = document.getElementById("payment-fee");
+    if (c && feeAmount) {
+      feeAmount.textContent = fmt(c.fee);
+    }
+    const confirmAmt = document.getElementById("reg-payment-confirm-amount");
+    if (confirmAmt && c) {
+      confirmAmt.textContent = fmt(c.fee);
+    }
+    return c ? c.fee : 0;
   }
 
   function commitName(id) {
@@ -443,6 +480,44 @@
       el.addEventListener("input", saveDraft);
       el.addEventListener("change", saveDraft);
     });
+    // Payment screenshot preview
+    const paymentInput = $("#reg-payment-proof");
+    if (paymentInput) {
+      paymentInput.addEventListener("change", (ev) => {
+        const file = ev.target.files[0];
+        if (file) {
+          const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+          if (!validTypes.includes(file.type)) {
+            setErr("reg-payment-proof", "Please upload a JPG, JPEG, PNG, or WEBP image.");
+            paymentInput.value = "";
+            return;
+          }
+          if (file.size > 5 * 1024 * 1024) {
+            setErr("reg-payment-proof", "File size must be 5 MB or less.");
+            paymentInput.value = "";
+            return;
+          }
+          setErr("reg-payment-proof", "");
+          const preview = $("#reg-payment-preview-img");
+          const previewContainer = $("#reg-payment-preview");
+          if (preview) {
+            preview.src = URL.createObjectURL(file);
+            previewContainer.hidden = false;
+          }
+        }
+      });
+      const removeBtn = $("#reg-payment-remove");
+      if (removeBtn) {
+        removeBtn.addEventListener("click", () => {
+          paymentInput.value = "";
+          const previewContainer = $("#reg-payment-preview");
+          const preview = $("#reg-payment-preview-img");
+          if (previewContainer) previewContainer.hidden = true;
+          if (preview) preview.src = "";
+          setErr("reg-payment-proof", "");
+        });
+      }
+    }
     // Wizard navigation
     $("#reg-prev").addEventListener("click", () => {
       if (state.step > 1) showStep(state.step - 1);
@@ -458,6 +533,66 @@
           showStep(step);
           return;
         }
+      }
+    if (state.step === 5) {
+      if (!validateStep(5)) {
+        showStep(5);
+        return;
+      }
+      showStep(6);
+      return;
+    }
+
+    if (state.step === 6) {
+        if (!validateStep(6)) {
+          showStep(6);
+          return;
+        }
+        // Submit payment to backend
+        const upiId = $("#reg-upi-id").value.trim();
+        const paymentFile = $("#reg-payment-proof").files[0];
+        const feeAmount = calculateAndDisplayFee();
+
+        const formData = new FormData();
+        formData.append("upiId", upiId);
+        formData.append("feeAmount", feeAmount);
+        formData.append("delegateName", $("#reg-name").value.trim());
+        formData.append("delegateEmail", $("#reg-email").value.trim());
+        formData.append("delegatePhone", $("#reg-phone").value.trim());
+        if (paymentFile) {
+          formData.append("payment-proof", paymentFile);
+        }
+
+        $("#reg-form").disabled = true;
+        $("#reg-submit").disabled = true;
+
+        fetch("http://localhost:3001/api/payment/submit", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            $("#reg-form").disabled = false;
+            $("#reg-submit").disabled = false;
+            if (data.success) {
+              $("#reg-form").hidden = true;
+              $(".reg__confirm").hidden = false;
+              const name = $("#reg-name").value.trim() || "Delegate";
+              $("#reg-confirm-text").textContent =
+                "Your registration and payment proof have been received. The NEBULA26 organising team will verify your payment.";
+              $("#reg-confirm-hint").textContent = "Payment Status: PENDING VERIFICATION";
+              saveDraft();
+            } else {
+              alert("Payment submission failed: " + (data.message || "Unknown error"));
+            }
+          })
+          .catch((err) => {
+            $("#reg-form").disabled = false;
+            $("#reg-submit").disabled = false;
+            alert("Failed to connect to payment server. Please try again later.");
+            console.error(err);
+          });
+        return;
       }
       $("#reg-form").hidden = true;
       $(".reg__confirm").hidden = false;
