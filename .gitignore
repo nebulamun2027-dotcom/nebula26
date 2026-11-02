@@ -1,0 +1,17 @@
+﻿# Environment secrets
+.env
+.env.*
+!.env.example
+server/.env
+server/.env.*
+
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# Uploads and logs
+uploads/
+*.log
+
+# Vercel
+.vercel/
