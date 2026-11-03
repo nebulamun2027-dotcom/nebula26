@@ -1,22 +1,9 @@
 {
   "version": 2,
   "framework": null,
-  "builds": [
-    { "src": "api/ai.js", "use": "@vercel/node" },
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "assets/**", "use": "@vercel/static" },
-    { "src": "css/**", "use": "@vercel/static" },
-    { "src": "js/**", "use": "@vercel/static" },
-    { "src": "vendor/**", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/api/ai/(.*)", "dest": "/api/ai.js" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/css/(.*)", "dest": "/css/$1" },
-    { "src": "/js/(.*)", "dest": "/js/$1" },
-    { "src": "/vendor/(.*)", "dest": "/vendor/$1" },
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/ai/:path*", "destination": "/api/ai.js" },
+    { "source": "/api/payment/submit", "destination": "/api/ai.js" }
   ],
   "cleanUrls": true,
   "trailingSlash": false
