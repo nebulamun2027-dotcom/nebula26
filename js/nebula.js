@@ -1089,8 +1089,10 @@
         core.position.y + o.baseY + Math.sin(o.angle * 1.7) * 0.35,
         core.position.z + z
       );
-      o.group.rotation.y = elapsed * 0.18 + o.orbit;
-      o.group.rotation.x = o.tilt;
+      if (o.group) {
+        o.group.rotation.y = elapsed * 0.18 + o.orbit;
+        o.group.rotation.x = o.tilt;
+      }
     }
 
     // asteroids travel through the scene

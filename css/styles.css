@@ -134,34 +134,41 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.
   z-index: 120;
   display: flex;
   align-items: center;
-  background: rgba(7, 10, 22, 0.88);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line-soft);
+  background: rgba(4, 6, 13, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 var(--gutter);
 }
 
+/* Marquee track: contains two copies of the text for a seamless loop. */
 .announce__marquee {
   flex: 1;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
 .announce__track {
   display: flex;
   width: max-content;
-  animation: marquee 26s linear infinite;
+  animation: marquee 30s linear infinite;
 }
 .announce__text {
   display: inline-flex;
   align-items: center;
+  gap: 0.5rem;
   white-space: nowrap;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--violet-bright);
 }
-.announce__sep { color: var(--blue); margin: 0 0.9rem; }
-.announce__pad { width: 4rem; }
+.announce__sep {
+  color: var(--blue);
+  margin: 0 0.5rem;
+  opacity: 0.7;
+}
+.announce__pad { width: 3rem; }
 
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -188,57 +195,59 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.
 .nav {
   position: sticky;
   top: var(--announce-h);
-  z-index: 100;
-  background: rgba(4, 6, 13, 0.72);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line-soft);
+  z-index: 110;
+  background: rgba(4, 6, 13, 0.78);
+  backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 0 rgba(143, 123, 255, 0.06);
 }
 
 .nav__inner {
   max-width: var(--container-w);
   margin: 0 auto;
-  padding: 0.9rem var(--gutter);
+  padding: 0.85rem var(--gutter);
   display: flex;
   align-items: center;
-  gap: 2rem;
-  min-height: 68px;
+  gap: 1.5rem;
+  min-height: 64px;
 }
 
-.brand { display: inline-flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+.brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
 .brand__mark { color: var(--violet); display: inline-flex; }
 .brand__word {
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--text);
 }
 .brand__year {
   color: var(--blue);
-  font-size: 1.05rem;
-  margin-left: 0.15rem;
+  font-size: 0.95rem;
+  margin-left: 0.1rem;
 }
 
 .nav__links {
   display: flex;
-  gap: 1.6rem;
+  gap: 1.4rem;
+  flex: 1;
 }
 .nav__menu {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.9rem;
   margin-left: auto;
   flex-shrink: 0;
 }
 .nav__link {
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-dim);
-  padding: 0.35rem 0.1rem;
+  padding: 0.45rem 0.15rem;
   position: relative;
-  transition: color 0.16s ease;
+  transition: color 0.2s ease;
 }
 .nav__link::after {
   content: "";
@@ -250,12 +259,38 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.
   background: linear-gradient(90deg, var(--violet), var(--blue));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
 }
 .nav__link:hover { color: var(--text); }
 .nav__link.is-active { color: var(--violet-bright); }
 .nav__link.is-active::after,
 .nav__link:hover::after { transform: scaleX(1); }
+
+/* Prominent register button in the navbar */
+.nav__register {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--violet), #6a5ce0 55%, var(--blue));
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(106, 92, 224, 0.35);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  flex-shrink: 0;
+}
+.nav__register:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px rgba(106, 92, 224, 0.5);
+  filter: brightness(1.05);
+}
+.nav__register:active { transform: translateY(0); }
 
 /* mobile toggle (hidden on desktop) */
 .nav__toggle {
@@ -1011,10 +1046,12 @@ footer[id] {
   }
   .nav__link { padding: 0.9rem 0.1rem; border-bottom: 1px solid var(--line-soft); }
   .nav__link::after { display: none; }
-  .nav__menu .btn--sm {
+  .nav__menu .nav__register {
     display: block;
     width: 100%;
     margin-top: 0.9rem;
+    text-align: center;
+    padding: 0.7rem 1rem;
   }
   .nav__toggle { display: block; }
 
@@ -1051,6 +1088,78 @@ footer[id] {
   .countdown__value { font-size: 1.4rem; }
   .countdown__cell { padding: 0.6rem 0.3rem; }
 }
+
+/* ---------- 16. Mobile optimizations ---------- */
+/* Safe-area support for iPhone (home indicator, dynamic browser bars) */
+html {
+  /* Allow user scaling — do not disable zoom */
+}
+@media (max-width: 768px) {
+  body {
+    padding-top: max(var(--announce-h), env(safe-area-inset-top));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+  .hero {
+    padding-top: max(var(--space-5), env(safe-area-inset-top));
+    padding-bottom: max(calc(var(--space-5) + 3rem), env(safe-area-inset-bottom));
+  }
+  .section {
+    padding: max(var(--space-5), 3rem) 0;
+  }
+  /* Reduce section title scale on smallest screens */
+  .section-title { font-size: clamp(1.75rem, 7vw, 2.2rem); }
+  .hero__title { font-size: clamp(2.4rem, 10vw, 5rem); }
+  .hero__tagline { font-size: clamp(1.25rem, 4vw, 1.9rem); margin-top: 0.9rem; }
+  .hero__date-main, .hero__venue-name { font-size: 2rem; }
+  .hero__cta { gap: 0.75rem; }
+  .hero__cta .btn { width: 100%; }
+  /* Tighter grids on mobile */
+  .committees__grid { gap: 0.9rem; }
+  .committee { padding: 1.2rem 1.1rem; }
+  .conference__grid { gap: 0.9rem; }
+  .info-card { padding: 1.2rem; }
+  .craft__item { gap: 0.9rem; padding: 1.2rem 0.4rem; }
+  .craft__name { font-size: 1.25rem; }
+  .about__lead { font-size: 1.15rem; }
+  .about__body { font-size: 0.9rem; }
+  /* Countdown tighter on mobile */
+  .countdown__cell { min-width: 0; flex: 1; padding: 0.7rem 0.35rem; }
+  .countdown__value { font-size: 1.6rem; }
+  .countdown__label { font-size: 0.62rem; }
+  /* Footer */
+  .footer { padding: max(var(--space-5), 3rem) 0 2rem; }
+  .footer__grid { gap: 1.6rem; }
+  .footer__heading { font-size: 0.65rem; margin-bottom: 0.75rem; }
+  .footer__list a { font-size: 0.85rem; }
+  /* Announcement bar text smaller on mobile */
+  .announce__text { font-size: 0.62rem; }
+  /* Galaxy node labels stay on screen */
+  .galaxy__node-label { font-size: 0.58rem; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  .galaxy__node { padding: 20px; }
+  .galaxy__node-planet { width: 28px; height: 28px; }
+  .galaxy__node-ring { width: 44px; height: 16px; }
+}
+/* Ensure buttons and links are usable touch targets (>= 44px) */
+.btn, .nav__link, .nav__toggle, .gw-card__enter, .gw-card__ghost,
+.gw-skip, .open-title__skip, .world__exit, .sheet__close,
+.ai-chat__toggle, .ai-chat__send, .ai-chat__close, .ai-chat__chip,
+.footer__replay, .nav__register, .footer__link-btn,
+.committee, .galaxy__node {
+  touch-action: manipulation;
+  min-height: 44px;
+  min-width: 44px;
+}
+/* Nav links: full-height touch target on mobile */
+@media (max-width: 900px) {
+  .nav__link { padding: 1rem 0; min-height: 44px; display: block; }
+  .nav__toggle { min-height: 44px; min-width: 44px; }
+}
+/* Committee cards: ensure they're tappable on touch devices */
+.committee { min-height: 140px; }
+/* Registration inputs: prevent iOS zoom on focus */
+input, select, textarea { font-size: 16px; }
+/* Dropdowns and modals: ensure they can close on touch */
+.modal__close, .sheet__close { min-height: 44px; min-width: 44px; }
 
 /* ---------- 17. Phase 2: committee modal + registration wizard ---------- */
 .modal {
@@ -2184,6 +2293,116 @@ body.gw-arriving [data-reveal].is-visible {
   .gw-stage, .gw-card, .gw-title__line > span { transition: none; }
   .gw-stage.is-live, .gw-card.is-live, .gw-stage--panel.is-live .gw-card { opacity: 1; transform: none; }
   body.gw-arriving [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Opening title overlay (shown during nebula intro) ---------- */
+.open-title {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  background: #04050c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.6s ease, visibility 0.6s;
+}
+.open-title[hidden], .open-title--hide {
+  opacity: 0;
+  visibility: hidden;
+}
+.open-title__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1.5rem;
+  width: 100%;
+  height: 100%;
+}
+.open-title__layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: min(9vh, 72px);
+  background: #000;
+  transform: scaleY(1);
+  transition: transform 0.9s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.open-title__layer--top { top: 0; transform-origin: top; }
+.open-title__layer--bottom { bottom: 0; transform-origin: bottom; }
+.open-title--hide .open-title__layer {
+  transform: scaleY(0);
+}
+.open-title__content {
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.open-title__content--reveal {
+  opacity: 1;
+  transform: none;
+}
+.open-title__kicker {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-transform: uppercase;
+  color: rgba(214, 220, 255, 0.55);
+  margin-bottom: 1rem;
+}
+.open-title__main {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+  color: #f2f1ff;
+  margin: 0;
+}
+.open-title__line {
+  display: block;
+}
+.open-title__sub {
+  margin-top: 1.2rem;
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  color: rgba(190, 196, 226, 0.6);
+  font-style: italic;
+  font-family: var(--font-display);
+}
+.open-title__skip {
+  position: absolute;
+  right: clamp(1rem, 3vw, 2.4rem);
+  bottom: calc(min(9vh, 72px) + 1.4rem);
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: rgba(210, 214, 240, 0.7);
+  background: rgba(10, 12, 26, 0.5);
+  border: 1px solid rgba(143, 123, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  z-index: 4;
+  transition: color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+}
+.open-title__skip:hover {
+  color: #fff;
+  border-color: rgba(183, 169, 255, 0.6);
+}
+.open-title__skip:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 /* ---------- 7b. The Venue ---------- */

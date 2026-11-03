@@ -96,6 +96,7 @@
 
   function openPanel() {
     state.open = true;
+    panel.removeAttribute("hidden");
     panel.classList.remove("hidden");
     panel.classList.add("is-open");
     toggle.setAttribute("aria-expanded", "true");
@@ -110,7 +111,10 @@
     toggle.setAttribute("aria-expanded", "false");
     panel.setAttribute("aria-hidden", "true");
     setTimeout(() => {
-      if (!state.open) panel.classList.add("hidden");
+      if (!state.open) {
+        panel.classList.add("hidden");
+        panel.setAttribute("hidden", "");
+      }
     }, 350);
   }
 

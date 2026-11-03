@@ -67,7 +67,7 @@
   </div>
 
   <!-- ======= Cinematic opening title overlay (shown during nebula intro) ======= -->
-  <div class="open-title" id="open-title" aria-hidden="true">
+  <div class="open-title open-title--hide" id="open-title" aria-hidden="true">
     <div class="open-title__inner">
       <div class="open-title__layer open-title__layer--top" aria-hidden="true"></div>
       <div class="open-title__layer open-title__layer--bottom" aria-hidden="true"></div>
@@ -167,7 +167,7 @@
           <li><a href="#contact" class="nav__link" data-nav>Contact</a></li>
 
         </ul>
-        <button type="button" data-open-register class="btn btn--primary btn--sm">Register</button>
+        <a href="https://forms.gle/WVg5vykPvgJKCRZA6" class="nav__register">Register</a>
       </div>
     </nav>
   </header>
@@ -208,7 +208,7 @@
 
         <div class="hero__cta" data-reveal data-delay="320">
           <a class="btn btn--primary" href="#committees">Explore Committees</a>
-          <button type="button" data-open-register class="btn btn--ghost">Register</button>
+          <a href="https://forms.gle/WVg5vykPvgJKCRZA6" class="btn btn--ghost">Register</a>
         </div>
 
         <!-- 4. Live countdown -->
@@ -380,7 +380,7 @@
                 <div class="dossier__matrix" id="dossier-matrix"></div>
                 <p class="dossier__count" id="dossier-count"></p>
               </div>
-              <button class="btn btn--primary" type="button" id="dossier-register">Register for this committee</button>
+              <a href="https://forms.gle/WVg5vykPvgJKCRZA6" class="btn btn--primary" id="dossier-register">Register for this committee</a>
             </div>
           </aside>
         </div>
@@ -538,13 +538,7 @@
           before the floor fills up.
         </p>
         <div class="cta__actions" data-reveal data-delay="200">
-          <button
-            class="btn btn--primary btn--lg"
-            type="button"
-            data-open-register
-          >
-            Start Your Registration
-          </button>
+          <a href="https://forms.gle/WVg5vykPvgJKCRZA6" class="btn btn--primary btn--lg">Start Your Registration</a>
           <a class="link-quiet" href="mailto:yoganshuSharma786@gmail.com">
             Questions? Write to the organising team
           </a>
@@ -586,7 +580,7 @@
             <li><a href="#about">About</a></li>
             <li><a href="#committees">Committees</a></li>
             <li><a href="#conference">Conference</a></li>
-            <li><button type="button" data-open-register class="footer__link-btn">Register</button></li>
+            <li><a href="https://forms.gle/WVg5vykPvgJKCRZA6" class="footer__link-btn">Register</a></li>
           </ul>
         </nav>
 
@@ -626,201 +620,6 @@
     </div>
   </footer>
 
-  <!-- ======= Phase 2: registration wizard modal ======= -->
-  <div class="modal" id="register-modal" hidden aria-hidden="true">
-    <div class="modal__backdrop" data-close-register></div>
-    <div class="modal__panel reg-panel" role="dialog" aria-modal="true" aria-labelledby="reg-title">
-      <button class="modal__close" type="button" data-close-register aria-label="Close registration">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-      <div class="reg">
-        <header class="reg__head">
-          <p class="eyebrow">Delegation Registration</p>
-          <h2 class="reg__title" id="reg-title">Join the NEBULA MUN 2026 floor</h2>
-          <p class="reg__sub">Five short steps: your details, three committee choices, your top portfolios, your MUN history, then a final review.</p>
-        </header>
-
-        <ol class="reg__rail" aria-label="Registration steps">
-          <li class="reg__rail-step is-current" data-rail="1"><span>1</span><span class="reg__rail-label">Details</span></li>
-          <li class="reg__rail-step" data-rail="2"><span>2</span><span class="reg__rail-label">Committees</span></li>
-          <li class="reg__rail-step" data-rail="3"><span>3</span><span class="reg__rail-label">Portfolios</span></li>
-          <li class="reg__rail-step" data-rail="4"><span>4</span><span class="reg__rail-label">Experience</span></li>
-          <li class="reg__rail-step" data-rail="5"><span>5</span><span class="reg__rail-label">Review</span></li>
-          <li class="reg__rail-step" data-rail="6"><span>6</span><span class="reg__rail-label">Payment</span></li>
-        </ol>
-
-        <form id="reg-form" novalidate>
-          <!-- Step 1: personal information -->
-          <div class="reg__pane" data-pane="1">
-            <div class="reg__fields">
-              <div class="reg__field">
-                <label for="reg-name">Full name <span class="reg__req" aria-hidden="true">*</span></label>
-                <input class="reg__input" id="reg-name" type="text" required autocomplete="name" placeholder="e.g. Aarav Sharma" />
-                <p class="reg__err" id="err-name" role="alert"></p>
-              </div>
-              <div class="reg__field">
-                <label for="reg-email">Email address <span class="reg__req" aria-hidden="true">*</span></label>
-                <input class="reg__input" id="reg-email" type="email" required autocomplete="email" placeholder="you@school.edu" />
-                <p class="reg__err" id="err-email" role="alert"></p>
-              </div>
-              <div class="reg__field">
-                <label for="reg-phone">Phone / WhatsApp <span class="reg__req" aria-hidden="true">*</span></label>
-                <input class="reg__input" id="reg-phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="+91 …" />
-                <p class="reg__err" id="err-phone" role="alert"></p>
-              </div>
-              <div class="reg__field">
-                <label for="reg-institution">School / College / Institution <span class="reg__req" aria-hidden="true">*</span></label>
-                <input class="reg__input" id="reg-institution" type="text" required autocomplete="organization" placeholder="Your school or university" />
-                <p class="reg__err" id="err-institution" role="alert"></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 2: committee preferences -->
-          <div class="reg__pane" data-pane="2" hidden>
-            <div class="reg__prefs">
-              <div class="reg__field">
-                <label for="reg-pref1">First choice committee <span class="reg__req" aria-hidden="true">*</span></label>
-                <select class="reg__input reg__select" id="reg-pref1" required>
-                  <option value="" selected disabled>Choose a committee…</option>
-                </select>
-                <p class="reg__fee-chip" id="fee-pref1"></p>
-                <p class="reg__err" id="err-pref1" role="alert"></p>
-              </div>
-              <div class="reg__field">
-                <label for="reg-pref2">Second choice committee <span class="reg__req" aria-hidden="true">*</span></label>
-                <select class="reg__input reg__select" id="reg-pref2" required>
-                  <option value="" selected disabled>Choose a committee…</option>
-                </select>
-                <p class="reg__fee-chip" id="fee-pref2"></p>
-                <p class="reg__err" id="err-pref2" role="alert"></p>
-              </div>
-              <div class="reg__field">
-                <label for="reg-pref3">Third choice committee <span class="reg__req" aria-hidden="true">*</span></label>
-                <select class="reg__input reg__select" id="reg-pref3" required>
-                  <option value="" selected disabled>Choose a committee…</option>
-                </select>
-                <p class="reg__fee-chip" id="fee-pref3"></p>
-                <p class="reg__err" id="err-pref3" role="alert"></p>
-              </div>
-            </div>
-            <p class="reg__note">The committee you viewed opens the form with it already set as your first choice. The payable amount is <em>To Be Confirmed by Organisers</em> — we will not add up all three fees.</p>
-          </div>
-
-          <!-- Step 3: portfolio preferences -->
-          <div class="reg__pane" data-pane="3" hidden>
-            <div class="reg__port">
-              <p class="reg__port-hint">Pick up to <strong>three</strong> portfolios in ranked order (1 = most wanted) from your first-choice committee.</p>
-              <input class="reg__input" id="reg-port-search" type="search" placeholder="Search portfolios…" aria-label="Search portfolios" />
-              <div class="reg__port-grid" id="reg-port-grid"></div>
-              <div class="reg__port-custom">
-                <label for="reg-port-custom">Prefer a portfolio that isn’t listed?</label>
-                <input class="reg__input" id="reg-port-custom" type="text" placeholder="Type it here — it will be passed to the organisers" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 4: MUN experience -->
-          <div class="reg__pane" data-pane="4" hidden>
-            <div class="reg__fields">
-              <div class="reg__field">
-                <label for="reg-muns">MUNs previously attended <span class="reg__req" aria-hidden="true">*</span></label>
-                <input class="reg__input" id="reg-muns" type="number" min="0" step="1" required inputmode="numeric" placeholder="0" />
-                <p class="reg__err" id="err-muns" role="alert"></p>
-              </div>
-              <div class="reg__field">
-                <label for="reg-awards">Awards won / prior experience</label>
-                <textarea class="reg__input reg__textarea" id="reg-awards" rows="4" placeholder="Best Paper, Outstanding Committee, prior conference history… (optional)"></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 5: review and submit -->
-          <div class="reg__pane" data-pane="5" hidden>
-            <h3 class="reg__review-title">Review your registration</h3>
-            <dl class="reg__review" id="reg-review"></dl>
-            <div class="reg__feebox" id="reg-feebox"></div>
-            <div class="reg__privacy">
-              <p><strong>Privacy &amp; submission note:</strong> This is a <em>demo / local-only</em> submission. Your data is not sent to the organisers until a backend is connected in Phase 3 (database, payment-proof upload and admin dashboard). No payment QR, UPI ID or transaction data is collected or fabricated.</p>
-            </div>
-          </div>
-
-          <!-- Step 6: Payment & Verification -->
-          <div class="reg__pane" data-pane="6" hidden>
-            <div class="payment-panel">
-              <div class="payment-header">
-                <div class="payment-badge">STEP 6 OF 6</div>
-                <h2 class="payment-title">PAYMENT &amp; VERIFICATION</h2>
-                <p class="payment-subtitle">Complete your registration payment to submit your application.</p>
-              </div>
-
-              <div class="payment-body">
-                <div class="payment-qr-section">
-                  <div class="qr-container">
-                    <img src="assets/images/upi-qr.svg" alt="IPL Auction UPI QR Code" class="qr-image"/>
-                    <div class="qr-label">Scan to pay via UPI</div>
-                  </div>
-                  <div class="payment-details">
-                    <div class="fee-display">
-                      <span class="fee-label">Registration Fee</span>
-                      <span class="fee-amount" id="payment-fee">₹1,500</span>
-                    </div>
-                    <div class="payment-info-text">
-                      Pay via any UPI app (Google Pay, PhonePe, Paytm, BHIM, etc.)
-                    </div>
-                  </div>
-                </div>
-
-                <div class="payment-inputs">
-                  <div class="reg__field">
-                    <label for="reg-upi-id">UPI Transaction ID / UTR Number <span class="reg__req" aria-hidden="true">*</span></label>
-                    <input class="reg__input" id="reg-upi-id" type="text" placeholder="e.g. 9876543210.20261206@upi" />
-                    <p class="reg__err" id="err-upi-id" role="alert"></p>
-                  </div>
-                  <div class="reg__field">
-                    <label for="reg-payment-proof">Upload Payment Screenshot <span class="reg__req" aria-hidden="true">*</span></label>
-                    <div class="reg__file-upload" id="reg-payment-upload-wrap">
-                      <input class="reg__input reg__file-input" id="reg-payment-proof" type="file" accept="image/jpeg,image/jpg,image/png,image/webp" required />
-                      <div class="reg__file-preview" id="reg-payment-preview" hidden>
-                        <img id="reg-payment-preview-img" src="" alt="Payment screenshot preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: cover; border: 1px solid var(--line); margin-top: 8px;"/>
-                        <button type="button" class="btn btn--ghost btn--sm" id="reg-payment-remove" style="margin-top: 6px;">Remove</button>
-                      </div>
-                      <p class="reg__err" id="err-payment-proof" role="alert"></p>
-                      <p class="reg__file-hint">JPG, JPEG, PNG, WEBP • Max 5 MB</p>
-                    </div>
-                  </div>
-                  <div class="reg__field">
-                    <label class="reg__checkbox-label">
-                      <input class="reg__input reg__checkbox" id="reg-payment-confirm" type="checkbox" required />
-                      <span>I confirm that I have completed the payment of <strong id="reg-payment-confirm-amount">₹1,500</strong> and that the uploaded screenshot is genuine.</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="reg__confirm" hidden>
-            <div class="reg__confirm-inner">
-              <div class="reg__confirm-glyph" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6L9 17l-5-5"/></svg>
-              </div>
-              <h3>Registration received</h3>
-              <p id="reg-confirm-text">Your details are saved locally on this device only. Once the organisers’ backend is live, your registration will be synced.</p>
-              <p class="reg__confirm-hint">Final payable amount: <strong>To Be Confirmed by Organisers</strong>.</p>
-            </div>
-          </div>
-
-          <footer class="reg__nav">
-            <button class="btn btn--ghost btn--sm" type="button" id="reg-prev">Back</button>
-            <button class="btn btn--primary btn--sm" type="button" id="reg-next">Continue</button>
-            <button class="btn btn--primary" type="submit" id="reg-submit" hidden>Submit registration</button>
-          </footer>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <script src="vendor/three.min.js" defer></script>
   <script src="js/data.js"></script>
   <script src="js/committee-themes.js"></script>
@@ -834,7 +633,6 @@
   <script src="js/gateway.js" defer></script>
   <script src="js/gateway-sequence.js" defer></script>
   <script src="js/galaxy.js" defer></script>
-  <script src="js/register.js" defer></script>
   <script src="js/nebula-ai.js" defer></script>
 
   <!-- ======= NEBULA AI — Conference Intelligence ======= -->
@@ -843,7 +641,7 @@
       <span class="ai-chat__orb" aria-hidden="true"></span>
       <span class="ai-chat__label">NEBULA AI</span>
     </button>
-    <div class="ai-chat__panel" id="ai-chat-panel" role="dialog" aria-modal="true" aria-label="NEBULA AI Assistant">
+    <div class="ai-chat__panel" id="ai-chat-panel" role="dialog" aria-modal="true" aria-label="NEBULA AI Assistant" hidden>
       <button class="ai-chat__close" id="ai-chat-close" type="button" aria-label="Close NEBULA AI">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
