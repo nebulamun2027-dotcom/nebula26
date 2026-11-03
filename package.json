@@ -1,0 +1,19 @@
+{
+  "name": "nebula-mun-2026",
+  "version": "1.0.0",
+  "description": "NEBULA MUN 2026 — premium cinematic conference website with AI assistant",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "node server/server.js",
+    "dev:frontend": "python -m http.server 8765",
+    "start": "node server/server.js",
+    "vercel-dev": "vercel dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
