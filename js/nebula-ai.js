@@ -6,9 +6,13 @@
 (function () {
   "use strict";
 
-  // Backend API runs on port 3001 (see server/.env PORT), not the frontend port (8765).
-  const API_BASE = "http://localhost:3001";
+  // Backend API: same-origin relative path in production (Vercel serverless),
+  // http://localhost:3001 during local development.
+  const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3001"
+    : "";
   const CHAT_ENDPOINT = API_BASE + "/api/ai/chat";
+  const HEALTH_ENDPOINT = API_BASE + "/api/ai/health";
 
   const toggle = document.getElementById("ai-chat-toggle");
   const panel = document.getElementById("ai-chat-panel");
@@ -18,8 +22,8 @@
   const input = document.getElementById("ai-chat-input");
   const sendBtn = document.getElementById("ai-chat-send");
   const messagesEl = document.getElementById("ai-chat-messages");
-  const emptyEl = messagesEl.querySelector(".ai-chat__empty");
-  const orbEl = toggle.querySelector(".ai-chat__orb");
+  const emptyEl = messagesEl ? messagesEl.querySelector(".ai-chat__empty") : null;
+  const orbEl = toggle ? toggle.querySelector(".ai-chat__orb") : null;
 
   const SUGGESTED = [
     "Which committee should I choose?",
@@ -39,20 +43,47 @@
   function init() {
     if (!toggle || !panel) return;
 
+    /* Hide the AI launcher while the intro plays; revealed on gateway complete */
+    toggle.style.display = "none";
+    toggle.setAttribute("hidden", "");
+
     toggle.addEventListener("click", togglePanel);
     closeBtn.addEventListener("click", closePanel);
     resetBtn.addEventListener("click", resetChat);
-    form.addEventListener("submit", handleSubmit);
+    form.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      sendChatMessage(input.value.trim(), messagesEl, input, sendBtn);
+    });
 
-    // Close panel when clicking the toggle again while open
+    // FIX: Send button click — explicit preventDefault + stopPropagation
+    sendBtn.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      sendChatMessage(input.value.trim(), messagesEl, input, sendBtn);
+    });
+
     document.addEventListener("keydown", (ev) => {
       if (ev.key === "Escape" && state.open) closePanel();
     });
 
-    // Auto-focus input when panel opens
     panel.addEventListener("animationend", () => {
       if (state.open && !state.thinking) input.focus({ preventScroll: true });
     });
+
+    /* Reveal the AI launcher once the gateway intro completes or is skipped */
+    function revealAiLauncher() {
+      toggle.style.display = "";
+      toggle.removeAttribute("hidden");
+    }
+    window.addEventListener("nebula:gateway-complete", revealAiLauncher, { once: true });
+
+    /* If the gateway was already dismissed (returning visitor / reduced motion),
+       reveal the AI launcher immediately instead of waiting for an event that
+       will never fire. */
+    if (!document.getElementById("gateway")) {
+      revealAiLauncher();
+    }
 
     renderWelcome();
   }
@@ -69,7 +100,6 @@
     panel.classList.add("is-open");
     toggle.setAttribute("aria-expanded", "true");
     panel.setAttribute("aria-hidden", "false");
-    // small delay so transition can run
     requestAnimationFrame(() => input.focus({ preventScroll: true }));
     renderWelcome();
   }
@@ -79,7 +109,6 @@
     panel.classList.remove("is-open");
     toggle.setAttribute("aria-expanded", "false");
     panel.setAttribute("aria-hidden", "true");
-    // let transition finish before hiding
     setTimeout(() => {
       if (!state.open) panel.classList.add("hidden");
     }, 350);
@@ -105,7 +134,6 @@
       chip.addEventListener("click", () => {
         input.value = q;
         input.focus({ preventScroll: true });
-        // submit on next frame so focus registers
         requestAnimationFrame(() => form.dispatchEvent(new Event("submit")));
       });
       chips.appendChild(chip);
@@ -184,15 +212,13 @@
   }
 
   /* ---------- submit ---------- */
-  async function handleSubmit(ev) {
-    ev.preventDefault();
-    const value = input.value.trim();
-    if (!value || state.thinking) return;
+  async function sendChatMessage(text, container, inputEl, sendBtnEl) {
+    if (!text || state.thinking) return;
 
-    input.value = "";
-    input.focus({ preventScroll: true });
+    inputEl.value = "";
+    inputEl.focus({ preventScroll: true });
 
-    addMessage(value, "user");
+    addMessage(text, "user");
     setThinking(true);
     const typingEl = addTyping();
 
@@ -201,7 +227,7 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{ role: "user", content: value }],
+          messages: [{ role: "user", content: text }],
         }),
       });
 
@@ -221,9 +247,16 @@
       removeTyping();
       setThinking(false);
       console.error("[nebula-ai] chat error:", err);
-      // Surface the real error so users/developers can diagnose connection or API issues
       const msg = err.message || "Unknown error";
-      addSystemMessage("Error: " + msg + " — please check your connection and try again.");
+      if (msg.includes("Failed to fetch") || msg.includes("fetch")) {
+        addSystemMessage("Could not reach the NEBULA AI backend. Is the server running on port 3001? Please try again shortly.");
+      } else if (msg.includes("401") || msg.includes("403")) {
+        addSystemMessage("AI service authentication failed. Please contact the organisers.");
+      } else if (msg.includes("502") || msg.includes("500")) {
+        addSystemMessage("The AI service is temporarily unavailable. Please try again later.");
+      } else {
+        addSystemMessage("Error: " + msg + " — please check your connection and try again.");
+      }
     }
   }
 

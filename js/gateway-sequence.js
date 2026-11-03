@@ -12,6 +12,8 @@
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   var STORE_KEY = "nebula.gateway.seen";
   var STAGE = { A: 0, B: 1, C: 2, EXIT: 3 };
+  var INTRO = { PLAYING: 0, COMPLETED: 1, SKIPPED: 2 };
+  var introState = INTRO.PLAYING;
 
   /* stage timings (ms) — kept short so nobody waits */
   var T = {
@@ -88,7 +90,7 @@
       body.classList.remove("gw-active");
       if (root.parentNode) root.parentNode.removeChild(root);
       try {
-        window.dispatchEvent(new CustomEvent("nebula:gateway-complete"));
+        window.dispatchEvent(new CustomEvent("nebula:gateway-complete", { detail: { intro: introState } }));
       } catch (e) { /* ignore */ }
       if (instant !== true) {
         body.classList.add("gw-arriving");
@@ -205,13 +207,18 @@
       state.stageT = 0;
       setStageUI(STAGE.EXIT);
       showSkip(false);
-      markSeen();
       var wait = fast ? 240 : Math.round(T.exitWarp * 0.55 + T.veilFade);
       exitTimer = setTimeout(function () {
-        handFocusBack();
-        revealSite(false);
-        destroy();
+        finalizeIntro(fast);
       }, wait);
+    }
+
+    function finalizeIntro(skipped) {
+      introState = skipped ? INTRO.SKIPPED : INTRO.COMPLETED;
+      markSeen();
+      handFocusBack();
+      revealSite(false);
+      destroy();
     }
 
     /* ====================================================================
@@ -246,6 +253,7 @@
       size();
       setStageUI(STAGE.A);
       showSkip(true);
+      introState = INTRO.PLAYING;
 
       root.classList.remove("gw-run");
       void root.offsetWidth;
